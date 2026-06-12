@@ -308,46 +308,61 @@ function PredictPageContent() {
     setShareUrl("");
   }
 
-    async function saveBracket() {
-      if (saving) return;
-
-      setSaving(true);
-
-      try {
-    if (isLocked) {
-      alert("Brackets are locked.");
-      return;
-    }
-
-    const bracketData = {
-      rankings,
-      thirdPlaceRanking,
-      winnersByMatch,
-    };
-
-    const { data, error } = await supabase
-      .from("brackets")
-      .upsert(
-        {
-          name: playerName || "Anonymous",
-          league: leagueCode || "public",
+  async function saveBracket() {
+    if (saving) return;
+  
+    setSaving(true);
+  
+    try {
+      if (isLocked) {
+        alert("Brackets are locked.");
+        return;
+      }
+    
+      const cleanName = playerName.trim() || "Anonymous";
+      const cleanLeague = leagueCode || "public";
+    
+      const bracketData = {
+        rankings,
+        thirdPlaceRanking,
+        winnersByMatch,
+      };
+    
+      const { data: existingBracket, error: checkError } = await supabase
+        .from("brackets")
+        .select("id")
+        .eq("name", cleanName)
+        .eq("league", cleanLeague)
+        .maybeSingle();
+    
+      if (checkError) {
+        console.error(checkError);
+        alert(checkError.message);
+        return;
+      }
+    
+      if (existingBracket) {
+        alert("That username is already taken in this league. Please choose another name.");
+        return;
+      }
+    
+      const { data, error } = await supabase
+        .from("brackets")
+        .insert({
+          name: cleanName,
+          league: cleanLeague,
           data: bracketData,
-        },
-        {
-          onConflict: "name,league",
-        }
-      )
-      .select()
-      .single();
-
-    if (error) {
-      console.error(error);
-      alert(error.message);
-      return;
-    }
-
-    setShareUrl(`${window.location.origin}/bracket/${data.id}`);
+        })
+        .select()
+        .single();
       
+      if (error) {
+        console.error(error);
+        alert(error.message);
+        return;
+      }
+    
+      setShareUrl(`${window.location.origin}/bracket/${data.id}`);
     } finally {
       setSaving(false);
     }
