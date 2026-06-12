@@ -1,13 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { groups } from "@/data/groups";
 import { countryCodes } from "@/data/countryCodes";
 import { supabase } from "@/lib/supabase";
 import { BRACKET_LOCK_DATE } from "@/lib/config";
-import { useSearchParams } from "next/navigation";
-import { Suspense } from "react";
-
 
 type Rankings = Record<string, string[]>;
 
@@ -79,19 +77,21 @@ function MatchButton({
 }
 
 function PredictPageContent() {
+  const searchParams = useSearchParams();
+
   const initialRankings: Rankings = Object.fromEntries(
     Object.entries(groups).map(([groupName, teams]) => [groupName, teams])
   );
 
   const isLocked = new Date() > BRACKET_LOCK_DATE;
-  const searchParams = useSearchParams();
+  const leagueFromUrl = searchParams.get("league") || "public";
+
   const [currentStep, setCurrentStep] = useState(1);
   const [mobileRound, setMobileRound] = useState(0);
   const [rankings, setRankings] = useState<Rankings>(initialRankings);
   const [thirdPlaceRanking, setThirdPlaceRanking] = useState<string[]>([]);
   const [winnersByMatch, setWinnersByMatch] = useState<Record<number, Slot>>({});
   const [shareUrl, setShareUrl] = useState("");
-  const leagueFromUrl = searchParams.get("league") || "public";
   const [saving, setSaving] = useState(false);
   const [playerName, setPlayerName] = useState("");
   const [leagueCode] = useState(leagueFromUrl);
@@ -138,64 +138,127 @@ function PredictPageContent() {
       getThirdPlaceSlot(allowed, usedThirdGroups);
 
     return [
-      { id: 74, teamA: { label: "1E", team: getTeam("E", 1) }, teamB: third(["A", "B", "C", "D", "F"]) },
-      { id: 77, teamA: { label: "1I", team: getTeam("I", 1) }, teamB: third(["C", "D", "F", "G", "H"]) },
-      { id: 73, teamA: { label: "2A", team: getTeam("A", 2) }, teamB: { label: "2B", team: getTeam("B", 2) } },
-      { id: 75, teamA: { label: "1F", team: getTeam("F", 1) }, teamB: { label: "2C", team: getTeam("C", 2) } },
-
-      { id: 83, teamA: { label: "2K", team: getTeam("K", 2) }, teamB: { label: "2L", team: getTeam("L", 2) } },
-      { id: 84, teamA: { label: "1H", team: getTeam("H", 1) }, teamB: { label: "2J", team: getTeam("J", 2) } },
-      { id: 81, teamA: { label: "1D", team: getTeam("D", 1) }, teamB: third(["B", "E", "F", "I", "J"]) },
-      { id: 82, teamA: { label: "1G", team: getTeam("G", 1) }, teamB: third(["A", "E", "H", "I", "J"]) },
-
-      { id: 76, teamA: { label: "1C", team: getTeam("C", 1) }, teamB: { label: "2F", team: getTeam("F", 2) } },
-      { id: 78, teamA: { label: "2E", team: getTeam("E", 2) }, teamB: { label: "2I", team: getTeam("I", 2) } },
-      { id: 79, teamA: { label: "1A", team: getTeam("A", 1) }, teamB: third(["C", "E", "F", "H", "I"]) },
-      { id: 80, teamA: { label: "1L", team: getTeam("L", 1) }, teamB: third(["E", "H", "I", "J", "K"]) },
-
-      { id: 86, teamA: { label: "1J", team: getTeam("J", 1) }, teamB: { label: "2H", team: getTeam("H", 2) } },
-      { id: 88, teamA: { label: "2D", team: getTeam("D", 2) }, teamB: { label: "2G", team: getTeam("G", 2) } },
-      { id: 85, teamA: { label: "1B", team: getTeam("B", 1) }, teamB: third(["E", "F", "G", "I", "J"]) },
-      { id: 87, teamA: { label: "1K", team: getTeam("K", 1) }, teamB: third(["D", "E", "I", "J", "L"]) },
+      {
+        id: 74,
+        teamA: { label: "1E", team: getTeam("E", 1) },
+        teamB: third(["A", "B", "C", "D", "F"]),
+      },
+      {
+        id: 77,
+        teamA: { label: "1I", team: getTeam("I", 1) },
+        teamB: third(["C", "D", "F", "G", "H"]),
+      },
+      {
+        id: 73,
+        teamA: { label: "2A", team: getTeam("A", 2) },
+        teamB: { label: "2B", team: getTeam("B", 2) },
+      },
+      {
+        id: 75,
+        teamA: { label: "1F", team: getTeam("F", 1) },
+        teamB: { label: "2C", team: getTeam("C", 2) },
+      },
+      {
+        id: 83,
+        teamA: { label: "2K", team: getTeam("K", 2) },
+        teamB: { label: "2L", team: getTeam("L", 2) },
+      },
+      {
+        id: 84,
+        teamA: { label: "1H", team: getTeam("H", 1) },
+        teamB: { label: "2J", team: getTeam("J", 2) },
+      },
+      {
+        id: 81,
+        teamA: { label: "1D", team: getTeam("D", 1) },
+        teamB: third(["B", "E", "F", "I", "J"]),
+      },
+      {
+        id: 82,
+        teamA: { label: "1G", team: getTeam("G", 1) },
+        teamB: third(["A", "E", "H", "I", "J"]),
+      },
+      {
+        id: 76,
+        teamA: { label: "1C", team: getTeam("C", 1) },
+        teamB: { label: "2F", team: getTeam("F", 2) },
+      },
+      {
+        id: 78,
+        teamA: { label: "2E", team: getTeam("E", 2) },
+        teamB: { label: "2I", team: getTeam("I", 2) },
+      },
+      {
+        id: 79,
+        teamA: { label: "1A", team: getTeam("A", 1) },
+        teamB: third(["C", "E", "F", "H", "I"]),
+      },
+      {
+        id: 80,
+        teamA: { label: "1L", team: getTeam("L", 1) },
+        teamB: third(["E", "H", "I", "J", "K"]),
+      },
+      {
+        id: 86,
+        teamA: { label: "1J", team: getTeam("J", 1) },
+        teamB: { label: "2H", team: getTeam("H", 2) },
+      },
+      {
+        id: 88,
+        teamA: { label: "2D", team: getTeam("D", 2) },
+        teamB: { label: "2G", team: getTeam("G", 2) },
+      },
+      {
+        id: 85,
+        teamA: { label: "1B", team: getTeam("B", 1) },
+        teamB: third(["E", "F", "G", "I", "J"]),
+      },
+      {
+        id: 87,
+        teamA: { label: "1K", team: getTeam("K", 1) },
+        teamB: third(["D", "E", "I", "J", "L"]),
+      },
     ];
   }
 
   function winner(matchId: number): Slot {
     return winnersByMatch[matchId] || { label: `W${matchId}`, team: "" };
   }
-const round32 = buildRoundOf32();
 
-const round16: Match[] = [
-  { id: 89, teamA: winner(74), teamB: winner(77) },
-  { id: 90, teamA: winner(73), teamB: winner(75) },
-  { id: 93, teamA: winner(83), teamB: winner(84) },
-  { id: 94, teamA: winner(81), teamB: winner(82) },
-  { id: 91, teamA: winner(76), teamB: winner(78) },
-  { id: 92, teamA: winner(79), teamB: winner(80) },
-  { id: 95, teamA: winner(86), teamB: winner(88) },
-  { id: 96, teamA: winner(85), teamB: winner(87) },
+  const round32 = buildRoundOf32();
+
+  const round16: Match[] = [
+    { id: 89, teamA: winner(74), teamB: winner(77) },
+    { id: 90, teamA: winner(73), teamB: winner(75) },
+    { id: 93, teamA: winner(83), teamB: winner(84) },
+    { id: 94, teamA: winner(81), teamB: winner(82) },
+    { id: 91, teamA: winner(76), teamB: winner(78) },
+    { id: 92, teamA: winner(79), teamB: winner(80) },
+    { id: 95, teamA: winner(86), teamB: winner(88) },
+    { id: 96, teamA: winner(85), teamB: winner(87) },
   ];
-const quarterfinals: Match[] = [
-  { id: 97, teamA: winner(89), teamB: winner(90) },
-  { id: 98, teamA: winner(93), teamB: winner(94) },
-  { id: 99, teamA: winner(91), teamB: winner(92) },
-  { id: 100, teamA: winner(95), teamB: winner(96) },
-];
 
-const semifinals: Match[] = [
-  { id: 101, teamA: winner(97), teamB: winner(98) },
-  { id: 102, teamA: winner(99), teamB: winner(100) },
-];
+  const quarterfinals: Match[] = [
+    { id: 97, teamA: winner(89), teamB: winner(90) },
+    { id: 98, teamA: winner(93), teamB: winner(94) },
+    { id: 99, teamA: winner(91), teamB: winner(92) },
+    { id: 100, teamA: winner(95), teamB: winner(96) },
+  ];
 
-function loser(match: Match): Slot {
-  const selectedWinner = winnersByMatch[match.id];
+  const semifinals: Match[] = [
+    { id: 101, teamA: winner(97), teamB: winner(98) },
+    { id: 102, teamA: winner(99), teamB: winner(100) },
+  ];
 
-  if (!selectedWinner) {
-    return { label: `L${match.id}`, team: "" };
+  function loser(match: Match): Slot {
+    const selectedWinner = winnersByMatch[match.id];
+
+    if (!selectedWinner) {
+      return { label: `L${match.id}`, team: "" };
+    }
+
+    return selectedWinner.team === match.teamA.team ? match.teamB : match.teamA;
   }
-
-  return selectedWinner.team === match.teamA.team ? match.teamB : match.teamA;
-}
 
   const thirdPlaceMatch: Match = {
     id: 103,
@@ -219,7 +282,6 @@ function loser(match: Match): Slot {
   ];
 
   const champion = winnersByMatch[104];
-  const thirdPlace = winnersByMatch[103];
 
   function swapGroupTeam(groupName: string, team: string) {
     if (
@@ -326,42 +388,44 @@ function loser(match: Match): Slot {
 
   async function saveBracket() {
     if (saving) return;
-  
+
     setSaving(true);
-  
+
     try {
       if (isLocked) {
         alert("Brackets are locked.");
         return;
       }
-    
+
       const cleanName = playerName.trim() || "Anonymous";
       const cleanLeague = leagueCode || "public";
-    
+
       const bracketData = {
         rankings,
         thirdPlaceRanking,
         winnersByMatch,
       };
-    
+
       const { data: existingBracket, error: checkError } = await supabase
         .from("brackets")
         .select("id")
         .eq("name", cleanName)
         .eq("league", cleanLeague)
         .maybeSingle();
-    
+
       if (checkError) {
         console.error(checkError);
         alert(checkError.message);
         return;
       }
-    
+
       if (existingBracket) {
-        alert("That username is already taken in this league. Please choose another name.");
+        alert(
+          "That username is already taken in this league. Please choose another name."
+        );
         return;
       }
-    
+
       const { data, error } = await supabase
         .from("brackets")
         .insert({
@@ -371,18 +435,19 @@ function loser(match: Match): Slot {
         })
         .select()
         .single();
-      
+
       if (error) {
         console.error(error);
         alert(error.message);
         return;
       }
-    
+
       setShareUrl(`${window.location.origin}/bracket/${data.id}`);
     } finally {
       setSaving(false);
     }
   }
+
   function StepButton({ step, label }: { step: number; label: string }) {
     return (
       <button
@@ -438,7 +503,8 @@ function loser(match: Match): Slot {
 
           {isLocked && (
             <div className="mt-6 rounded-2xl border border-red-400 bg-red-500/20 p-4 font-bold text-red-200">
-              Brackets are locked. You can view the app, but new predictions cannot be saved.
+              Brackets are locked. You can view the app, but new predictions
+              cannot be saved.
             </div>
           )}
 
@@ -456,7 +522,8 @@ function loser(match: Match): Slot {
               <div>
                 <h2 className="text-4xl font-black">Group Stage</h2>
                 <p className="mt-2 text-slate-300">
-                  Tap one team, then tap another team in the same group to swap them.
+                  Tap one team, then tap another team in the same group to swap
+                  them.
                 </p>
               </div>
 
@@ -540,7 +607,8 @@ function loser(match: Match): Slot {
               <div>
                 <h2 className="text-4xl font-black">Best Third-Place Teams</h2>
                 <p className="mt-2 text-slate-300">
-                  Tap one team, then tap another team to swap them. Top 8 advance.
+                  Tap one team, then tap another team to swap them. Top 8
+                  advance.
                 </p>
               </div>
 
@@ -607,7 +675,8 @@ function loser(match: Match): Slot {
               <div>
                 <h2 className="text-4xl font-black">Knockout Bracket</h2>
                 <p className="mt-2 text-slate-300">
-                  Desktop shows the full bracket. Mobile uses round-by-round tabs.
+                  Desktop shows the full bracket. Mobile uses round-by-round
+                  tabs.
                 </p>
               </div>
 
@@ -653,47 +722,99 @@ function loser(match: Match): Slot {
             </div>
 
             <div className="hidden overflow-x-auto rounded-[2rem] border border-lime-400/30 bg-black/70 p-6 shadow-2xl lg:block">
-              <div className="flex min-w-[1450px] items-center justify-between gap-6">
+              <div className="flex min-w-[1550px] items-center justify-between gap-6">
                 <div className="grid w-[260px] gap-4">
+                  <h3 className="text-center text-sm font-black text-lime-300">
+                    Round of 32
+                  </h3>
                   {round32.slice(0, 8).map((match) => (
                     <RenderMatch key={match.id} match={match} />
                   ))}
                 </div>
 
                 <div className="grid w-[240px] gap-8">
+                  <h3 className="text-center text-sm font-black text-lime-300">
+                    Round of 16
+                  </h3>
                   {round16.slice(0, 4).map((match) => (
                     <RenderMatch key={match.id} match={match} />
                   ))}
                 </div>
 
                 <div className="grid w-[230px] gap-16">
-                  {quarterfinals.slice(2, 4).map((match) => (
+                  <h3 className="text-center text-sm font-black text-lime-300">
+                    Quarterfinals
+                  </h3>
+                  {quarterfinals.slice(0, 2).map((match) => (
                     <RenderMatch key={match.id} match={match} />
                   ))}
                 </div>
-
 
                 <div className="grid w-[230px] gap-16">
-                  {quarterfinals.slice(2, 4).map((match) => (
+                  <h3 className="text-center text-sm font-black text-lime-300">
+                    Semifinals
+                  </h3>
+                  {semifinals.map((match) => (
                     <RenderMatch key={match.id} match={match} />
                   ))}
                 </div>
-                                
+
                 <div className="w-[280px]">
                   <div className="rounded-[2rem] border border-lime-400 bg-lime-400 p-6 text-center text-black shadow-2xl">
                     <p className="text-xs font-black uppercase tracking-[0.3em]">
                       Final M104
                     </p>
-                
-                    <div className="mt-4">
+
+                    <div className="mt-4 text-white">
                       <RenderMatch match={final} />
                     </div>
-                
+
                     {champion?.team && (
-                      <h3 className="mt-5 text-4xl font-black">{champion.team}</h3>
+                      <h3 className="mt-5 text-4xl font-black">
+                        {champion.team}
+                      </h3>
                     )}
                   </div>
-                
+
+                  <div className="mt-6 rounded-[2rem] border border-white/10 bg-white/10 p-4">
+                    <h3 className="mb-3 text-center text-sm font-black text-lime-300">
+                      Third Place
+                    </h3>
+                    <RenderMatch match={thirdPlaceMatch} />
+                  </div>
+                </div>
+
+                <div className="grid w-[230px] gap-16">
+                  <h3 className="text-center text-sm font-black text-lime-300">
+                    Quarterfinals
+                  </h3>
+                  {quarterfinals.slice(2, 4).map((match) => (
+                    <RenderMatch key={match.id} match={match} />
+                  ))}
+                </div>
+
+                <div className="grid w-[240px] gap-8">
+                  <h3 className="text-center text-sm font-black text-lime-300">
+                    Round of 16
+                  </h3>
+                  {round16.slice(4, 8).map((match) => (
+                    <RenderMatch key={match.id} match={match} />
+                  ))}
+                </div>
+
+                <div className="grid w-[260px] gap-4">
+                  <h3 className="text-center text-sm font-black text-lime-300">
+                    Round of 32
+                  </h3>
+                  {round32.slice(8, 16).map((match) => (
+                    <RenderMatch key={match.id} match={match} />
+                  ))}
+                </div>
+              </div>
+            </div>
+          </section>
+        )}
+
         {currentStep === 4 && (
           <section className="rounded-3xl border border-white/10 bg-white/10 p-8 shadow-2xl backdrop-blur-xl">
             <h2 className="text-4xl font-black">Save & Share</h2>
