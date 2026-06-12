@@ -308,43 +308,33 @@ function PredictPageContent() {
   }
 
   async function saveBracket() {
-    const { data: userData } = await supabase.auth.getUser();
-
-    if (!userData.user) {
-      alert("Please log in first.");
+    if (isLocked) {
+      alert("Brackets are locked.");
       return;
     }
-
-    const { data: profile } = await supabase
-      .from("profiles")
-      .select("*")
-      .eq("id", userData.user.id)
-      .single();
-
+  
     const bracketData = {
       rankings,
       thirdPlaceRanking,
       winnersByMatch,
     };
-
+  
     const { data, error } = await supabase
       .from("brackets")
       .insert({
-        user_id: userData.user.id,
-        player_name: profile?.username || "Anonymous",
-        name: profile?.username || "Anonymous",
+        name: playerName || "Anonymous",
         league: leagueCode || "public",
         data: bracketData,
       })
       .select()
       .single();
-
+    
     if (error) {
       console.error(error);
       alert(error.message);
       return;
     }
-
+  
     setShareUrl(`${window.location.origin}/bracket/${data.id}`);
   }
 
