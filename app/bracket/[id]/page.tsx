@@ -311,7 +311,7 @@ export default function Home() {
               <div>
                 <h2 className="text-4xl font-black">Group Stage</h2>
                 <p className="mt-2 text-slate-300">
-                  Drag teams inside each group. This now works better on mobile.
+                  Teams inside each group
                 </p>
               </div>
 
@@ -337,19 +337,19 @@ export default function Home() {
                     <h3 className="text-2xl font-black">Group {groupName}</h3>
                   </div>
 
-                  <SortableTeamList
-                    teams={teams}
-                    onChange={(newTeams) => {
-                      setRankings((old) => ({
-                        ...old,
-                        [groupName]: newTeams,
-                      }));
-
-                      setThirdPlaceRanking([]);
-                      setWinnersByMatch({});
-                      setShareUrl("");
-                    }}
-                  />
+                <SortableTeamList
+                  teams={teams}
+                  onChange={(newTeams) => {
+                    setRankings((old) => ({
+                      ...old,
+                      [groupName]: newTeams,
+                    }));
+                
+                    setThirdPlaceRanking([]);
+                    setWinnersByMatch({});
+                    setShareUrl("");
+                  }}
+                />
                 </div>
               ))}
             </div>
@@ -362,7 +362,7 @@ export default function Home() {
               <div>
                 <h2 className="text-4xl font-black">Best Third-Place Teams</h2>
                 <p className="mt-2 text-slate-300">
-                  Drag the third-place teams. Top 8 advance.
+                  Third-place teams. Top 8 advance.
                 </p>
               </div>
 
