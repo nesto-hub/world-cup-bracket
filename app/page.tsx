@@ -21,7 +21,7 @@ export default function HomePage() {
 
         <div className="mt-10 flex flex-wrap gap-4">
           <Link
-            href="/predict"
+            href="/leagues"
             className="rounded-2xl bg-lime-400 px-7 py-4 font-black text-black hover:bg-lime-300"
           >
             Create Bracket
