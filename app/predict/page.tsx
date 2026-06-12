@@ -6,6 +6,7 @@ import { countryCodes } from "@/data/countryCodes";
 import { supabase } from "@/lib/supabase";
 import { BRACKET_LOCK_DATE } from "@/lib/config";
 import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 
 type Rankings = Record<string, string[]>;
 
@@ -76,7 +77,7 @@ function MatchButton({
   );
 }
 
-export default function Home() {
+function PredictPageContent() {
   const initialRankings: Rankings = Object.fromEntries(
     Object.entries(groups).map(([groupName, teams]) => [groupName, teams])
   );
@@ -727,5 +728,12 @@ export default function Home() {
         )}
       </div>
     </main>
+  );
+}
+export default function PredictPage() {
+  return (
+    <Suspense fallback={<main className="min-h-screen bg-black text-white" />}>
+      <PredictPageContent />
+    </Suspense>
   );
 }
