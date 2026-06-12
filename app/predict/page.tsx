@@ -92,7 +92,7 @@ function PredictPageContent() {
   const [winnersByMatch, setWinnersByMatch] = useState<Record<number, Slot>>({});
   const [shareUrl, setShareUrl] = useState("");
   const leagueFromUrl = searchParams.get("league") || "public";
-
+  const [saving, setSaving] = useState(false);
   const [playerName, setPlayerName] = useState("");
   const [leagueCode] = useState(leagueFromUrl);
 
@@ -308,7 +308,12 @@ function PredictPageContent() {
     setShareUrl("");
   }
 
-  async function saveBracket() {
+    async function saveBracket() {
+      if (saving) return;
+
+      setSaving(true);
+
+      try {
     if (isLocked) {
       alert("Brackets are locked.");
       return;
@@ -322,11 +327,16 @@ function PredictPageContent() {
 
     const { data, error } = await supabase
       .from("brackets")
-      .insert({
-        name: playerName || "Anonymous",
-        league: leagueCode || "public",
-        data: bracketData,
-      })
+      .upsert(
+        {
+          name: playerName || "Anonymous",
+          league: leagueCode || "public",
+          data: bracketData,
+        },
+        {
+          onConflict: "name,league",
+        }
+      )
       .select()
       .single();
 
@@ -337,8 +347,11 @@ function PredictPageContent() {
     }
 
     setShareUrl(`${window.location.origin}/bracket/${data.id}`);
+      
+    } finally {
+      setSaving(false);
+    }
   }
-
   function StepButton({ step, label }: { step: number; label: string }) {
     return (
       <button
@@ -701,11 +714,11 @@ function PredictPageContent() {
 
 
             <button
-              disabled={isLocked}
+              disabled={isLocked || saving}
               onClick={saveBracket}
               className="mt-6 rounded-2xl bg-lime-400 px-6 py-3 font-black text-black hover:bg-lime-300 disabled:bg-slate-600 disabled:text-slate-300"
             >
-              Save Bracket
+              {saving ? "Saving..." : "Save Bracket"}
             </button>
 
             {shareUrl && (
