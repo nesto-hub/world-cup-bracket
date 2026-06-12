@@ -33,13 +33,13 @@ export default function LeaguesPage() {
       return;
     }
 
-    router.push(`/predict?league=${code}`);
+    router.push(`/predict?league=${encodeURIComponent(code)}`);
   }
 
   async function joinLeague() {
     setMessage("");
 
-    const code = joinCode.trim().toLowerCase();
+    const code = joinCode.trim().toLowerCase().replace(/\s+/g, "-");
 
     if (!code) {
       setMessage("Enter a league code.");
@@ -56,8 +56,8 @@ export default function LeaguesPage() {
       setMessage("League not found.");
       return;
     }
-
-    router.push(`/predict?league=${code}`);
+    
+    router.push(`/predict?league=${encodeURIComponent(code)}`);
   }
 
   return (

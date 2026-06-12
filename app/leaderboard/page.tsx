@@ -120,9 +120,12 @@ export default async function LeaderboardPage({
           {league && (
             <div className="mt-6 rounded-2xl bg-black/40 p-4 text-sm text-slate-300">
               Share this league leaderboard:
-              <span className="ml-2 font-bold text-lime-400">
-                /leaderboard?league={league}
-              </span>
+                <a
+                  href={`/leaderboard/${league}`}
+                  className="ml-2 font-bold text-lime-400 hover:underline"
+                >
+                  /leaderboard/{league}
+                </a>
             </div>
           )}
         </header>
