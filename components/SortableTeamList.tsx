@@ -62,12 +62,10 @@ export default function SortableTeamList({ teams, onChange }: Props) {
           <button
             key={team}
             type="button"
-            onClick={() => handleTeamClick(team)}
-            className={`w-full touch-manipulation select-none rounded-2xl border p-4 text-left font-bold transition active:scale-[0.98] ${
-              isSelected
-                ? "border-lime-300 bg-lime-400 text-black"
-                : "border-white/10 bg-black/40 text-white hover:bg-white/10"
-            }`}
+            onClick={() => {
+                console.log("clicked", team);
+                handleTeamClick(team);
+            }}
           >
             <div className="flex items-center justify-between gap-3">
               <div className="flex min-w-0 items-center gap-3">

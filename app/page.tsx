@@ -28,6 +28,7 @@ function Flag({ team }: { team: string }) {
       src={`https://flagcdn.com/w40/${code}.png`}
       alt={`${team} flag`}
       className="h-5 w-7 rounded object-cover shadow"
+      draggable={false}
     />
   );
 }
@@ -79,10 +80,19 @@ export default function Home() {
   );
 
   const [currentStep, setCurrentStep] = useState(1);
+  const [mobileRound, setMobileRound] = useState(0);
   const [rankings, setRankings] = useState<Rankings>(initialRankings);
   const [thirdPlaceRanking, setThirdPlaceRanking] = useState<string[]>([]);
   const [winnersByMatch, setWinnersByMatch] = useState<Record<number, Slot>>({});
   const [shareUrl, setShareUrl] = useState("");
+
+  const [selectedGroupSwap, setSelectedGroupSwap] = useState<{
+    groupName: string;
+    team: string;
+  } | null>(null);
+
+  const [selectedThirdPlaceSwap, setSelectedThirdPlaceSwap] =
+    useState<string | null>(null);
 
   function getTeam(group: string, position: number): string {
     return rankings[group]?.[position - 1] || "";
@@ -118,89 +128,25 @@ export default function Home() {
       getThirdPlaceSlot(allowed, usedThirdGroups);
 
     return [
-      {
-        id: 74,
-        teamA: { label: "1E", team: getTeam("E", 1) },
-        teamB: third(["A", "B", "C", "D", "F"]),
-      },
-      {
-        id: 77,
-        teamA: { label: "1I", team: getTeam("I", 1) },
-        teamB: third(["C", "D", "F", "G", "H"]),
-      },
-      {
-        id: 73,
-        teamA: { label: "2A", team: getTeam("A", 2) },
-        teamB: { label: "2B", team: getTeam("B", 2) },
-      },
-      {
-        id: 75,
-        teamA: { label: "1F", team: getTeam("F", 1) },
-        teamB: { label: "2C", team: getTeam("C", 2) },
-      },
+      { id: 74, teamA: { label: "1E", team: getTeam("E", 1) }, teamB: third(["A", "B", "C", "D", "F"]) },
+      { id: 77, teamA: { label: "1I", team: getTeam("I", 1) }, teamB: third(["C", "D", "F", "G", "H"]) },
+      { id: 73, teamA: { label: "2A", team: getTeam("A", 2) }, teamB: { label: "2B", team: getTeam("B", 2) } },
+      { id: 75, teamA: { label: "1F", team: getTeam("F", 1) }, teamB: { label: "2C", team: getTeam("C", 2) } },
 
-      {
-        id: 83,
-        teamA: { label: "2K", team: getTeam("K", 2) },
-        teamB: { label: "2L", team: getTeam("L", 2) },
-      },
-      {
-        id: 84,
-        teamA: { label: "1H", team: getTeam("H", 1) },
-        teamB: { label: "2J", team: getTeam("J", 2) },
-      },
-      {
-        id: 81,
-        teamA: { label: "1D", team: getTeam("D", 1) },
-        teamB: third(["B", "E", "F", "I", "J"]),
-      },
-      {
-        id: 82,
-        teamA: { label: "1G", team: getTeam("G", 1) },
-        teamB: third(["A", "E", "H", "I", "J"]),
-      },
+      { id: 83, teamA: { label: "2K", team: getTeam("K", 2) }, teamB: { label: "2L", team: getTeam("L", 2) } },
+      { id: 84, teamA: { label: "1H", team: getTeam("H", 1) }, teamB: { label: "2J", team: getTeam("J", 2) } },
+      { id: 81, teamA: { label: "1D", team: getTeam("D", 1) }, teamB: third(["B", "E", "F", "I", "J"]) },
+      { id: 82, teamA: { label: "1G", team: getTeam("G", 1) }, teamB: third(["A", "E", "H", "I", "J"]) },
 
-      {
-        id: 76,
-        teamA: { label: "1C", team: getTeam("C", 1) },
-        teamB: { label: "2F", team: getTeam("F", 2) },
-      },
-      {
-        id: 78,
-        teamA: { label: "2E", team: getTeam("E", 2) },
-        teamB: { label: "2I", team: getTeam("I", 2) },
-      },
-      {
-        id: 79,
-        teamA: { label: "1A", team: getTeam("A", 1) },
-        teamB: third(["C", "E", "F", "H", "I"]),
-      },
-      {
-        id: 80,
-        teamA: { label: "1L", team: getTeam("L", 1) },
-        teamB: third(["E", "H", "I", "J", "K"]),
-      },
+      { id: 76, teamA: { label: "1C", team: getTeam("C", 1) }, teamB: { label: "2F", team: getTeam("F", 2) } },
+      { id: 78, teamA: { label: "2E", team: getTeam("E", 2) }, teamB: { label: "2I", team: getTeam("I", 2) } },
+      { id: 79, teamA: { label: "1A", team: getTeam("A", 1) }, teamB: third(["C", "E", "F", "H", "I"]) },
+      { id: 80, teamA: { label: "1L", team: getTeam("L", 1) }, teamB: third(["E", "H", "I", "J", "K"]) },
 
-      {
-        id: 86,
-        teamA: { label: "1J", team: getTeam("J", 1) },
-        teamB: { label: "2H", team: getTeam("H", 2) },
-      },
-      {
-        id: 88,
-        teamA: { label: "2D", team: getTeam("D", 2) },
-        teamB: { label: "2G", team: getTeam("G", 2) },
-      },
-      {
-        id: 85,
-        teamA: { label: "1B", team: getTeam("B", 1) },
-        teamB: third(["E", "F", "G", "I", "J"]),
-      },
-      {
-        id: 87,
-        teamA: { label: "1K", team: getTeam("K", 1) },
-        teamB: third(["D", "E", "I", "J", "L"]),
-      },
+      { id: 86, teamA: { label: "1J", team: getTeam("J", 1) }, teamB: { label: "2H", team: getTeam("H", 2) } },
+      { id: 88, teamA: { label: "2D", team: getTeam("D", 2) }, teamB: { label: "2G", team: getTeam("G", 2) } },
+      { id: 85, teamA: { label: "1B", team: getTeam("B", 1) }, teamB: third(["E", "F", "G", "I", "J"]) },
+      { id: 87, teamA: { label: "1K", team: getTeam("K", 1) }, teamB: third(["D", "E", "I", "J", "L"]) },
     ];
   }
 
@@ -239,36 +185,78 @@ export default function Home() {
     teamB: winner(102),
   };
 
+  const rounds = [
+    { name: "Round of 32", matches: round32 },
+    { name: "Round of 16", matches: round16 },
+    { name: "Quarterfinals", matches: quarterfinals },
+    { name: "Semifinals", matches: semifinals },
+    { name: "Final", matches: [final] },
+  ];
+
   const champion = winnersByMatch[104];
 
-  function handleDragStart(
-    event: React.DragEvent<HTMLDivElement>,
-    groupName: string,
-    index: number
-  ) {
-    event.dataTransfer.setData("groupName", groupName);
-    event.dataTransfer.setData("index", String(index));
-  }
+  function swapGroupTeam(groupName: string, team: string) {
+    if (
+      selectedGroupSwap &&
+      selectedGroupSwap.groupName === groupName &&
+      selectedGroupSwap.team === team
+    ) {
+      setSelectedGroupSwap(null);
+      return;
+    }
 
-  function handleDrop(
-    event: React.DragEvent<HTMLDivElement>,
-    groupName: string,
-    dropIndex: number
-  ) {
-    const sourceGroup = event.dataTransfer.getData("groupName");
-    const sourceIndex = Number(event.dataTransfer.getData("index"));
-
-    if (sourceGroup !== groupName) return;
+    if (!selectedGroupSwap || selectedGroupSwap.groupName !== groupName) {
+      setSelectedGroupSwap({ groupName, team });
+      return;
+    }
 
     setRankings((old) => {
       const updatedGroup = [...old[groupName]];
-      const [movedTeam] = updatedGroup.splice(sourceIndex, 1);
-      updatedGroup.splice(dropIndex, 0, movedTeam);
+      const firstIndex = updatedGroup.indexOf(selectedGroupSwap.team);
+      const secondIndex = updatedGroup.indexOf(team);
 
-      return { ...old, [groupName]: updatedGroup };
+      if (firstIndex === -1 || secondIndex === -1) return old;
+
+      updatedGroup[firstIndex] = team;
+      updatedGroup[secondIndex] = selectedGroupSwap.team;
+
+      return {
+        ...old,
+        [groupName]: updatedGroup,
+      };
     });
 
+    setSelectedGroupSwap(null);
     setThirdPlaceRanking([]);
+    setWinnersByMatch({});
+    setShareUrl("");
+  }
+
+  function swapThirdPlaceTeam(team: string) {
+    if (selectedThirdPlaceSwap === team) {
+      setSelectedThirdPlaceSwap(null);
+      return;
+    }
+
+    if (!selectedThirdPlaceSwap) {
+      setSelectedThirdPlaceSwap(team);
+      return;
+    }
+
+    setThirdPlaceRanking((old) => {
+      const updated = [...old];
+      const firstIndex = updated.indexOf(selectedThirdPlaceSwap);
+      const secondIndex = updated.indexOf(team);
+
+      if (firstIndex === -1 || secondIndex === -1) return old;
+
+      updated[firstIndex] = team;
+      updated[secondIndex] = selectedThirdPlaceSwap;
+
+      return updated;
+    });
+
+    setSelectedThirdPlaceSwap(null);
     setWinnersByMatch({});
     setShareUrl("");
   }
@@ -279,33 +267,11 @@ export default function Home() {
       .filter(Boolean);
 
     setThirdPlaceRanking(thirdPlaceTeams);
+    setSelectedGroupSwap(null);
+    setSelectedThirdPlaceSwap(null);
     setWinnersByMatch({});
     setShareUrl("");
     setCurrentStep(2);
-  }
-
-  function handleThirdPlaceDragStart(
-    event: React.DragEvent<HTMLDivElement>,
-    index: number
-  ) {
-    event.dataTransfer.setData("thirdPlaceIndex", String(index));
-  }
-
-  function handleThirdPlaceDrop(
-    event: React.DragEvent<HTMLDivElement>,
-    dropIndex: number
-  ) {
-    const sourceIndex = Number(event.dataTransfer.getData("thirdPlaceIndex"));
-
-    setThirdPlaceRanking((old) => {
-      const updated = [...old];
-      const [movedTeam] = updated.splice(sourceIndex, 1);
-      updated.splice(dropIndex, 0, movedTeam);
-      return updated;
-    });
-
-    setWinnersByMatch({});
-    setShareUrl("");
   }
 
   function startKnockout() {
@@ -314,6 +280,8 @@ export default function Home() {
       return;
     }
 
+    setSelectedGroupSwap(null);
+    setSelectedThirdPlaceSwap(null);
     setWinnersByMatch({});
     setShareUrl("");
     setCurrentStep(3);
@@ -355,13 +323,7 @@ export default function Home() {
     setShareUrl(`${window.location.origin}/bracket/${data.id}`);
   }
 
-  function StepButton({
-    step,
-    label,
-  }: {
-    step: number;
-    label: string;
-  }) {
+  function StepButton({ step, label }: { step: number; label: string }) {
     return (
       <button
         onClick={() => setCurrentStep(step)}
@@ -428,7 +390,7 @@ export default function Home() {
               <div>
                 <h2 className="text-4xl font-black">Group Stage</h2>
                 <p className="mt-2 text-slate-300">
-                  Drag teams inside each group to predict 1st, 2nd, 3rd, and 4th.
+                  Tap one team, then tap another team in the same group to swap them.
                 </p>
               </div>
 
@@ -436,7 +398,7 @@ export default function Home() {
                 onClick={generateThirdPlaceRanking}
                 className="rounded-2xl bg-lime-400 px-6 py-3 font-black text-black hover:bg-lime-300"
               >
-                Continue to Third-Place Teams
+                Continue
               </button>
             </div>
 
@@ -455,36 +417,50 @@ export default function Home() {
                   </div>
 
                   <div className="space-y-3">
-                    {teams.map((team, index) => (
-                      <div
-                        key={team}
-                        draggable
-                        onDragStart={(event) =>
-                          handleDragStart(event, groupName, index)
-                        }
-                        onDragOver={(event) => event.preventDefault()}
-                        onDrop={(event) => handleDrop(event, groupName, index)}
-                        className="flex cursor-move items-center justify-between rounded-2xl border border-white/10 bg-black/40 p-4 hover:bg-black/60"
-                      >
-                        <div className="flex min-w-0 items-center gap-3 font-bold">
+                    {teams.map((team, index) => {
+                      const isSelected =
+                        selectedGroupSwap?.groupName === groupName &&
+                        selectedGroupSwap?.team === team;
+
+                      return (
+                        <button
+                          key={team}
+                          type="button"
+                          onClick={() => swapGroupTeam(groupName, team)}
+                          className={`flex w-full touch-manipulation select-none items-center justify-between rounded-2xl border p-4 text-left font-bold transition active:scale-[0.98] ${
+                            isSelected
+                              ? "border-lime-300 bg-lime-400 text-black"
+                              : "border-white/10 bg-black/40 text-white hover:bg-white/10"
+                          }`}
+                        >
+                          <div className="flex min-w-0 items-center gap-3">
+                            <span
+                              className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-black ${
+                                index < 2
+                                  ? "bg-lime-400 text-black"
+                                  : index === 2
+                                  ? "bg-yellow-300 text-black"
+                                  : "bg-slate-700 text-white"
+                              }`}
+                            >
+                              {index + 1}
+                            </span>
+
+                            <TeamLabel team={team} />
+                          </div>
+
                           <span
-                            className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-black ${
-                              index < 2
-                                ? "bg-lime-400 text-black"
-                                : index === 2
-                                ? "bg-yellow-300 text-black"
-                                : "bg-slate-700 text-white"
+                            className={`shrink-0 rounded-full px-3 py-1 text-xs font-black ${
+                              isSelected
+                                ? "bg-black/20 text-black"
+                                : "bg-white/10 text-slate-300"
                             }`}
                           >
-                            {index + 1}
+                            {isSelected ? "Selected" : "Tap"}
                           </span>
-
-                          <TeamLabel team={team} />
-                        </div>
-
-                        <span className="text-slate-500">⋮⋮</span>
-                      </div>
-                    ))}
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
               ))}
@@ -498,7 +474,7 @@ export default function Home() {
               <div>
                 <h2 className="text-4xl font-black">Best Third-Place Teams</h2>
                 <p className="mt-2 text-slate-300">
-                  Drag the third-place teams. The top 8 advance to the Round of 32.
+                  Tap one team, then tap another team to swap them. Top 8 advance.
                 </p>
               </div>
 
@@ -506,45 +482,55 @@ export default function Home() {
                 onClick={startKnockout}
                 className="rounded-2xl bg-lime-400 px-6 py-3 font-black text-black hover:bg-lime-300"
               >
-                Continue to Knockouts
+                Continue
               </button>
             </div>
 
             <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-              {thirdPlaceRanking.map((team, index) => (
-                <div
-                  key={team}
-                  draggable
-                  onDragStart={(event) =>
-                    handleThirdPlaceDragStart(event, index)
-                  }
-                  onDragOver={(event) => event.preventDefault()}
-                  onDrop={(event) => handleThirdPlaceDrop(event, index)}
-                  className={`flex cursor-move items-center justify-between rounded-2xl border p-4 font-bold ${
-                    index < 8
-                      ? "border-lime-400 bg-lime-400/20"
-                      : "border-white/10 bg-white/10"
-                  }`}
-                >
-                  <div className="flex min-w-0 items-center gap-3">
+              {thirdPlaceRanking.map((team, index) => {
+                const isSelected = selectedThirdPlaceSwap === team;
+
+                return (
+                  <button
+                    key={team}
+                    type="button"
+                    onClick={() => swapThirdPlaceTeam(team)}
+                    className={`flex w-full touch-manipulation select-none items-center justify-between rounded-2xl border p-4 text-left font-bold transition active:scale-[0.98] ${
+                      isSelected
+                        ? "border-lime-300 bg-lime-400 text-black"
+                        : index < 8
+                        ? "border-lime-400 bg-lime-400/20 text-white"
+                        : "border-white/10 bg-white/10 text-white"
+                    }`}
+                  >
+                    <div className="flex min-w-0 items-center gap-3">
+                      <span
+                        className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-sm font-black ${
+                          index < 8
+                            ? "bg-lime-400 text-black"
+                            : "bg-slate-700 text-white"
+                        }`}
+                      >
+                        {index + 1}
+                      </span>
+
+                      <TeamLabel team={team} />
+                    </div>
+
                     <span
-                      className={`flex h-9 w-9 items-center justify-center rounded-full text-sm font-black ${
-                        index < 8
+                      className={`shrink-0 rounded-full px-3 py-1 text-xs font-black ${
+                        isSelected
+                          ? "bg-black/20 text-black"
+                          : index < 8
                           ? "bg-lime-400 text-black"
-                          : "bg-slate-700 text-white"
+                          : "bg-black/40 text-white"
                       }`}
                     >
-                      {index + 1}
+                      {isSelected ? "Selected" : index < 8 ? "Advances" : "Out"}
                     </span>
-
-                    <TeamLabel team={team} />
-                  </div>
-
-                  <span className="rounded-full bg-black/40 px-3 py-1 text-xs font-black">
-                    {index < 8 ? "Advances" : "Out"}
-                  </span>
-                </div>
-              ))}
+                  </button>
+                );
+              })}
             </div>
           </section>
         )}
@@ -555,7 +541,7 @@ export default function Home() {
               <div>
                 <h2 className="text-4xl font-black">Knockout Bracket</h2>
                 <p className="mt-2 text-slate-300">
-                  Click winners. The matches follow the official-style 2026 bracket path.
+                  Desktop shows the full bracket. Mobile uses round-by-round tabs.
                 </p>
               </div>
 
@@ -563,15 +549,44 @@ export default function Home() {
                 onClick={() => setCurrentStep(4)}
                 className="rounded-2xl bg-lime-400 px-6 py-3 font-black text-black hover:bg-lime-300"
               >
-                Continue to Save
+                Save
               </button>
             </div>
 
-            <div className="overflow-x-auto rounded-[2rem] border border-lime-400/30 bg-black/70 p-6 shadow-2xl">
-              <div className="mb-8 text-center">
-                <h3 className="text-5xl font-black">WORLD CHAMPIONS</h3>
+            <div className="lg:hidden">
+              <div className="mb-4 flex gap-2 overflow-x-auto pb-2">
+                {rounds.map((round, index) => (
+                  <button
+                    key={round.name}
+                    onClick={() => setMobileRound(index)}
+                    className={`shrink-0 rounded-full px-4 py-2 text-sm font-black ${
+                      mobileRound === index
+                        ? "bg-lime-400 text-black"
+                        : "bg-white/10 text-white"
+                    }`}
+                  >
+                    {round.name}
+                  </button>
+                ))}
               </div>
 
+              <div className="space-y-4">
+                {rounds[mobileRound].matches.map((match) => (
+                  <RenderMatch key={match.id} match={match} />
+                ))}
+              </div>
+
+              {champion?.team && (
+                <div className="mt-6 rounded-3xl bg-lime-400 p-6 text-center text-black">
+                  <p className="font-black uppercase tracking-[0.25em]">
+                    Champion
+                  </p>
+                  <h3 className="mt-3 text-4xl font-black">{champion.team}</h3>
+                </div>
+              )}
+            </div>
+
+            <div className="hidden overflow-x-auto rounded-[2rem] border border-lime-400/30 bg-black/70 p-6 shadow-2xl lg:block">
               <div className="flex min-w-[1450px] items-center justify-between gap-6">
                 <div className="grid w-[260px] gap-4">
                   {round32.slice(0, 8).map((match) => (
@@ -607,23 +622,9 @@ export default function Home() {
                   </div>
 
                   {champion?.team && (
-                    <div className="mt-6">
-                      <p className="text-xs font-black uppercase tracking-[0.3em]">
-                        Champion
-                      </p>
-
-                      <img
-                        src={`https://flagcdn.com/w160/${
-                          countryCodes[champion.team]
-                        }.png`}
-                        alt={`${champion.team} flag`}
-                        className="mx-auto mt-4 h-20 w-32 rounded-xl object-cover shadow-xl"
-                      />
-
-                      <h3 className="mt-4 text-3xl font-black">
-                        {champion.team}
-                      </h3>
-                    </div>
+                    <h3 className="mt-5 text-4xl font-black">
+                      {champion.team}
+                    </h3>
                   )}
                 </div>
 
@@ -658,10 +659,6 @@ export default function Home() {
         {currentStep === 4 && (
           <section className="rounded-3xl border border-white/10 bg-white/10 p-8 shadow-2xl backdrop-blur-xl">
             <h2 className="text-4xl font-black">Save & Share</h2>
-
-            <p className="mt-2 text-slate-300">
-              Save your bracket and send the link to friends.
-            </p>
 
             <button
               onClick={saveBracket}
