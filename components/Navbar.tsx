@@ -5,7 +5,7 @@ export default function Navbar() {
     <nav className="sticky top-0 z-50 border-b border-white/10 bg-black/80 backdrop-blur-xl">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 text-white">
         <Link href="/" className="text-lg font-black">
-          World Cup Bracket
+          La Quinela
         </Link>
 
         <div className="flex gap-2">
