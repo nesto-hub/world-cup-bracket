@@ -126,7 +126,69 @@ export default async function LeaderboardPage({
             </div>
           )}
         </header>
-
+          <section className="mt-8 rounded-3xl border border-white/10 bg-white/10 p-6 shadow-2xl backdrop-blur-xl">
+          <p className="text-sm font-black uppercase tracking-[0.3em] text-lime-400">
+            Scoring Guide
+          </p>
+        
+          <h2 className="mt-2 text-3xl font-black">
+            How Points Are Earned
+          </h2>
+        
+          <p className="mt-2 text-slate-300">
+            Predict group standings and knockout winners to earn points.
+            Later rounds are worth more.
+          </p>
+        
+          <div className="mt-6 grid gap-4 md:grid-cols-2">
+            <div className="rounded-2xl bg-black/40 p-4">
+              <p className="text-2xl font-black text-lime-400">2 pts</p>
+              <p className="text-slate-300">Correct group winner</p>
+            </div>
+        
+            <div className="rounded-2xl bg-black/40 p-4">
+              <p className="text-2xl font-black text-lime-400">2 pts</p>
+              <p className="text-slate-300">Correct group runner-up</p>
+            </div>
+        
+            <div className="rounded-2xl bg-black/40 p-4">
+              <p className="text-2xl font-black text-lime-400">3 pts</p>
+              <p className="text-slate-300">Correct advancing 3rd-place team</p>
+            </div>
+        
+            <div className="rounded-2xl bg-black/40 p-4">
+              <p className="text-2xl font-black text-lime-400">4 pts</p>
+              <p className="text-slate-300">Round of 32 winner</p>
+            </div>
+        
+            <div className="rounded-2xl bg-black/40 p-4">
+              <p className="text-2xl font-black text-lime-400">8 pts</p>
+              <p className="text-slate-300">Round of 16 winner</p>
+            </div>
+        
+            <div className="rounded-2xl bg-black/40 p-4">
+              <p className="text-2xl font-black text-lime-400">16 pts</p>
+              <p className="text-slate-300">Quarterfinal winner</p>
+            </div>
+        
+            <div className="rounded-2xl bg-black/40 p-4">
+              <p className="text-2xl font-black text-lime-400">24 pts</p>
+              <p className="text-slate-300">Semifinal winner</p>
+            </div>
+        
+            <div className="rounded-2xl bg-black/40 p-4">
+              <p className="text-2xl font-black text-lime-400">16 pts</p>
+              <p className="text-slate-300">Third-place match winner</p>
+            </div>
+        
+            <div className="rounded-2xl bg-lime-400/20 border border-lime-400 p-4 md:col-span-2">
+              <p className="text-3xl font-black text-lime-400">32 pts</p>
+              <p className="text-slate-100 font-bold">
+                Correct World Cup Champion
+              </p>
+            </div>
+          </div>
+        </section>
         <section className="mt-8 rounded-3xl border border-white/10 bg-white/10 p-6 shadow-2xl backdrop-blur-xl">
           <h2 className="text-3xl font-black">Standings</h2>
 
