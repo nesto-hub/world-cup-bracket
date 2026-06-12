@@ -16,7 +16,7 @@ export default function HomePage() {
 
         <p className="mt-6 max-w-2xl text-xl text-slate-300">
           Rank the groups, choose the best third-place teams, predict the
-          knockouts, save your bracket, and compete with friends.
+          knockouts, save your bracket, y gana 50 dolares
         </p>
 
         <div className="mt-10 flex flex-wrap gap-4">
