@@ -667,17 +667,18 @@ function loser(match: Match): Slot {
                 </div>
 
                 <div className="grid w-[230px] gap-16">
-                  {quarterfinals.slice(0, 2).map((match) => (
+                  {quarterfinals.slice(2, 4).map((match) => (
                     <RenderMatch key={match.id} match={match} />
                   ))}
                 </div>
 
-                <div className="grid w-[220px] gap-20">
-                  {semifinals.slice(0, 1).map((match) => (
+
+                <div className="grid w-[230px] gap-16">
+                  {quarterfinals.slice(2, 4).map((match) => (
                     <RenderMatch key={match.id} match={match} />
                   ))}
                 </div>
-                
+                                
                 <div className="w-[280px]">
                   <div className="rounded-[2rem] border border-lime-400 bg-lime-400 p-6 text-center text-black shadow-2xl">
                     <p className="text-xs font-black uppercase tracking-[0.3em]">
@@ -740,7 +741,7 @@ function loser(match: Match): Slot {
                   ))}
                 </div>
 
-                <d
+                <div
 
         {currentStep === 4 && (
           <section className="rounded-3xl border border-white/10 bg-white/10 p-8 shadow-2xl backdrop-blur-xl">
