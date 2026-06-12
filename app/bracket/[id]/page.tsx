@@ -1,8 +1,20 @@
 import { supabase } from "@/lib/supabase";
 import { countryCodes } from "@/data/countryCodes";
+import { calculateScore } from "@/lib/scoring";
 
 type Slot = {
   label: string;
+  team: string;
+};
+
+type ActualResult = {
+  match_id: number;
+  winner: string;
+};
+
+type ActualGroupRanking = {
+  group_name: string;
+  position: number;
   team: string;
 };
 
@@ -26,7 +38,9 @@ function TeamRow({ team, index }: { team: string; index: number }) {
       <span className="flex h-8 w-8 items-center justify-center rounded-full bg-lime-400 text-sm font-black text-black">
         {index + 1}
       </span>
+
       <Flag team={team} />
+
       <span>{team}</span>
     </div>
   );
@@ -38,7 +52,9 @@ function WinnerRow({ slot }: { slot: Slot }) {
   return (
     <div className="flex items-center gap-3 rounded-xl bg-lime-400/20 p-3 font-bold">
       <Flag team={slot.team} />
+
       <span>{slot.team}</span>
+
       <span className="ml-auto rounded bg-black/40 px-2 py-1 text-xs">
         {slot.label}
       </span>
@@ -59,6 +75,14 @@ export default async function BracketPage({
     .eq("id", id)
     .single();
 
+  const { data: actualResults } = await supabase
+    .from("actual_results")
+    .select("*");
+
+  const { data: actualGroupRankings } = await supabase
+    .from("actual_group_rankings")
+    .select("*");
+
   if (error || !data) {
     return (
       <main className="min-h-screen bg-black p-8 text-white">
@@ -73,6 +97,12 @@ export default async function BracketPage({
   const winnersByMatch = bracket.winnersByMatch || {};
   const champion = winnersByMatch["104"];
 
+  const score = calculateScore(
+    bracket,
+    (actualResults || []) as ActualResult[],
+    (actualGroupRankings || []) as ActualGroupRanking[]
+  );
+
   return (
     <main className="min-h-screen bg-black text-white">
       <div className="fixed inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(132,204,22,0.25),transparent_30%),radial-gradient(circle_at_top_right,_rgba(236,72,153,0.20),transparent_35%),radial-gradient(circle_at_bottom,_rgba(59,130,246,0.18),transparent_45%)]" />
@@ -86,6 +116,14 @@ export default async function BracketPage({
           <h1 className="mt-2 text-5xl font-black">
             {data.name || "World Cup Bracket"}
           </h1>
+
+          <div className="mt-6 rounded-2xl bg-lime-400 p-6 text-black">
+            <p className="text-sm font-black uppercase tracking-[0.3em]">
+              Current Score
+            </p>
+
+            <h2 className="mt-2 text-5xl font-black">{score} pts</h2>
+          </div>
         </header>
 
         {champion?.team && (
@@ -141,8 +179,11 @@ export default async function BracketPage({
                 }`}
               >
                 <span>{index + 1}</span>
+
                 <Flag team={team} />
+
                 <span>{team}</span>
+
                 <span className="ml-auto text-xs">
                   {index < 8 ? "Advances" : "Out"}
                 </span>
@@ -160,6 +201,7 @@ export default async function BracketPage({
                 <p className="mb-3 text-xs font-black text-lime-300">
                   Match {matchId}
                 </p>
+
                 <WinnerRow slot={slot as Slot} />
               </div>
             ))}
