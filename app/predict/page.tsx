@@ -5,6 +5,7 @@ import { groups } from "@/data/groups";
 import { countryCodes } from "@/data/countryCodes";
 import { supabase } from "@/lib/supabase";
 import { BRACKET_LOCK_DATE } from "@/lib/config";
+import { useSearchParams } from "next/navigation";
 
 type Rankings = Record<string, string[]>;
 
@@ -81,16 +82,17 @@ export default function Home() {
   );
 
   const isLocked = new Date() > BRACKET_LOCK_DATE;
-
+  const searchParams = useSearchParams();
   const [currentStep, setCurrentStep] = useState(1);
   const [mobileRound, setMobileRound] = useState(0);
   const [rankings, setRankings] = useState<Rankings>(initialRankings);
   const [thirdPlaceRanking, setThirdPlaceRanking] = useState<string[]>([]);
   const [winnersByMatch, setWinnersByMatch] = useState<Record<number, Slot>>({});
   const [shareUrl, setShareUrl] = useState("");
+  const leagueFromUrl = searchParams.get("league") || "public";
 
   const [playerName, setPlayerName] = useState("");
-  const [leagueCode, setLeagueCode] = useState("public");
+  const [leagueCode] = useState(leagueFromUrl);
 
   const [selectedGroupSwap, setSelectedGroupSwap] = useState<{
     groupName: string;
@@ -306,24 +308,24 @@ export default function Home() {
 
   async function saveBracket() {
     const { data: userData } = await supabase.auth.getUser();
-  
+
     if (!userData.user) {
       alert("Please log in first.");
       return;
     }
-  
+
     const { data: profile } = await supabase
       .from("profiles")
       .select("*")
       .eq("id", userData.user.id)
       .single();
-  
+
     const bracketData = {
       rankings,
       thirdPlaceRanking,
       winnersByMatch,
     };
-  
+
     const { data, error } = await supabase
       .from("brackets")
       .insert({
@@ -335,13 +337,13 @@ export default function Home() {
       })
       .select()
       .single();
-    
+
     if (error) {
       console.error(error);
       alert(error.message);
       return;
     }
-  
+
     setShareUrl(`${window.location.origin}/bracket/${data.id}`);
   }
 
@@ -698,17 +700,13 @@ export default function Home() {
               value={playerName}
               onChange={(e) => setPlayerName(e.target.value)}
             />
+            <div className="mt-6 rounded-xl bg-black/40 p-4 text-slate-300">
+              League:
+              <span className="ml-2 font-black text-lime-400">
+                {leagueCode}
+              </span>
+            </div>
 
-            <label className="mt-6 block text-sm font-black uppercase tracking-[0.2em] text-lime-400">
-              League Code
-            </label>
-
-            <input
-              className="mt-2 w-full rounded-xl border border-white/10 bg-black/50 p-4 text-white"
-              placeholder="stanford"
-              value={leagueCode}
-              onChange={(e) => setLeagueCode(e.target.value.toLowerCase())}
-            />
 
             <button
               disabled={isLocked}

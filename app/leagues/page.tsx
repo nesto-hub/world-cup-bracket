@@ -87,7 +87,7 @@ export default function LeaguesPage() {
 
             <input
               className="mt-2 w-full rounded-xl border border-white/10 bg-black/50 p-4 text-white"
-              placeholder="Stanford Friends"
+              placeholder="Friends"
               value={createName}
               onChange={(e) => setCreateName(e.target.value)}
             />
@@ -98,7 +98,7 @@ export default function LeaguesPage() {
 
             <input
               className="mt-2 w-full rounded-xl border border-white/10 bg-black/50 p-4 text-white"
-              placeholder="stanford"
+              placeholder="League Code"
               value={createCode}
               onChange={(e) => setCreateCode(e.target.value)}
             />
@@ -120,7 +120,7 @@ export default function LeaguesPage() {
 
             <input
               className="mt-2 w-full rounded-xl border border-white/10 bg-black/50 p-4 text-white"
-              placeholder="stanford"
+              placeholder="League Code"
               value={joinCode}
               onChange={(e) => setJoinCode(e.target.value)}
             />
