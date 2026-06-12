@@ -17,8 +17,8 @@ export default function Navbar() {
             Create / Join
           </Link>
 
-          <Link href="/leaderboard-search" className="rounded-xl bg-white/10 px-4 py-2 font-bold hover:bg-white/20">
-            Leaderboard
+          <Link href="/leaderboard" className="rounded-xl bg-white/10 px-4 py-2 font-bold hover:bg-white/20">
+            Public Leaderboard
           </Link>
         </div>
       </div>
