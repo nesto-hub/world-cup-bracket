@@ -677,43 +677,45 @@ function loser(match: Match): Slot {
                     <RenderMatch key={match.id} match={match} />
                   ))}
                 </div>
-                <div className="w-[280px] rounded-[2rem] border border-yellow-300 bg-yellow-300 p-6 text-center text-black shadow-2xl">
-                  <p className="text-xs font-black uppercase tracking-[0.3em]">
-                    Third Place M103
-                  </p>
                 
-                  <div className="mt-4">
-                    <RenderMatch match={thirdPlaceMatch} />
+                <div className="w-[280px]">
+                  <div className="rounded-[2rem] border border-lime-400 bg-lime-400 p-6 text-center text-black shadow-2xl">
+                    <p className="text-xs font-black uppercase tracking-[0.3em]">
+                      Final M104
+                    </p>
+                
+                    <div className="mt-4">
+                      <RenderMatch match={final} />
+                    </div>
+                
+                    {champion?.team && (
+                      <h3 className="mt-5 text-4xl font-black">{champion.team}</h3>
+                    )}
                   </div>
                 
-                  {thirdPlace?.team && (
-                    <h3 className="mt-5 text-3xl font-black">
-                      3rd: {thirdPlace.team}
-                    </h3>
-                  )}
-                </div>
-                <div className="w-[280px] rounded-[2rem] border border-lime-400 bg-lime-400 p-6 text-center text-black shadow-2xl">
-                  <p className="text-xs font-black uppercase tracking-[0.3em]">
-                    Final M104
-                  </p>
-
-                  <div className="mt-4">
-                    <RenderMatch match={final} />
+                  <div className="mt-6 rounded-[2rem] border border-yellow-300 bg-yellow-300 p-6 text-center text-black shadow-2xl">
+                    <p className="text-xs font-black uppercase tracking-[0.3em]">
+                      Third Place M103
+                    </p>
+                
+                    <div className="mt-4">
+                      <RenderMatch match={thirdPlaceMatch} />
+                    </div>
+                
+                    {thirdPlace?.team && (
+                      <h3 className="mt-5 text-3xl font-black">
+                        3rd: {thirdPlace.team}
+                      </h3>
+                    )}
                   </div>
-
-                  {champion?.team && (
-                    <h3 className="mt-5 text-4xl font-black">
-                      {champion.team}
-                    </h3>
-                  )}
                 </div>
-
+                
                 <div className="grid w-[220px] gap-20">
                   {semifinals.slice(1, 2).map((match) => (
                     <RenderMatch key={match.id} match={match} />
                   ))}
                 </div>
-
+                
                 <div className="grid w-[230px] gap-16">
                   {quarterfinals.slice(2, 4).map((match) => (
                     <RenderMatch key={match.id} match={match} />
@@ -734,7 +736,11 @@ function loser(match: Match): Slot {
               </div>
             </div>
           </section>
-        )}
+        )} <RenderMatch key={match.id} match={match} />
+                  ))}
+                </div>
+
+                <d
 
         {currentStep === 4 && (
           <section className="rounded-3xl border border-white/10 bg-white/10 p-8 shadow-2xl backdrop-blur-xl">
