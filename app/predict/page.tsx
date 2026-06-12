@@ -164,30 +164,33 @@ function PredictPageContent() {
     return winnersByMatch[matchId] || { label: `W${matchId}`, team: "" };
   }
 
-  const round32 = buildRoundOf32();
+const quarterfinals: Match[] = [
+  { id: 97, teamA: winner(89), teamB: winner(90) },
+  { id: 98, teamA: winner(93), teamB: winner(94) },
+  { id: 99, teamA: winner(91), teamB: winner(92) },
+  { id: 100, teamA: winner(95), teamB: winner(96) },
+];
 
-  const round16: Match[] = [
-    { id: 89, teamA: winner(74), teamB: winner(77) },
-    { id: 90, teamA: winner(73), teamB: winner(75) },
-    { id: 93, teamA: winner(83), teamB: winner(84) },
-    { id: 94, teamA: winner(81), teamB: winner(82) },
-    { id: 91, teamA: winner(76), teamB: winner(78) },
-    { id: 92, teamA: winner(79), teamB: winner(80) },
-    { id: 95, teamA: winner(86), teamB: winner(88) },
-    { id: 96, teamA: winner(85), teamB: winner(87) },
-  ];
+const semifinals: Match[] = [
+  { id: 101, teamA: winner(97), teamB: winner(98) },
+  { id: 102, teamA: winner(99), teamB: winner(100) },
+];
 
-  const quarterfinals: Match[] = [
-    { id: 97, teamA: winner(89), teamB: winner(90) },
-    { id: 98, teamA: winner(93), teamB: winner(94) },
-    { id: 99, teamA: winner(91), teamB: winner(92) },
-    { id: 100, teamA: winner(95), teamB: winner(96) },
-  ];
+function loser(match: Match): Slot {
+  const selectedWinner = winnersByMatch[match.id];
 
-  const semifinals: Match[] = [
-    { id: 101, teamA: winner(97), teamB: winner(98) },
-    { id: 102, teamA: winner(99), teamB: winner(100) },
-  ];
+  if (!selectedWinner) {
+    return { label: `L${match.id}`, team: "" };
+  }
+
+  return selectedWinner.team === match.teamA.team ? match.teamB : match.teamA;
+}
+
+  const thirdPlaceMatch: Match = {
+    id: 103,
+    teamA: loser(semifinals[0]),
+    teamB: loser(semifinals[1]),
+  };
 
   const final: Match = {
     id: 104,
@@ -200,10 +203,12 @@ function PredictPageContent() {
     { name: "Round of 16", matches: round16 },
     { name: "Quarterfinals", matches: quarterfinals },
     { name: "Semifinals", matches: semifinals },
+    { name: "Third Place", matches: [thirdPlaceMatch] },
     { name: "Final", matches: [final] },
   ];
 
   const champion = winnersByMatch[104];
+  const thirdPlace = winnersByMatch[103];
 
   function swapGroupTeam(groupName: string, team: string) {
     if (
