@@ -27,7 +27,7 @@ export default function SortableTeamList({ teams, onChange }: Props) {
   const [selectedTeam, setSelectedTeam] = useState<string | null>(null);
 
   function handleTeamClick(team: string) {
-    if (!selectedTeam) {
+    if (selectedTeam === null) {
       setSelectedTeam(team);
       return;
     }
@@ -39,6 +39,11 @@ export default function SortableTeamList({ teams, onChange }: Props) {
 
     const firstIndex = teams.indexOf(selectedTeam);
     const secondIndex = teams.indexOf(team);
+
+    if (firstIndex === -1 || secondIndex === -1) {
+      setSelectedTeam(null);
+      return;
+    }
 
     const updatedTeams = [...teams];
     updatedTeams[firstIndex] = team;
@@ -58,39 +63,47 @@ export default function SortableTeamList({ teams, onChange }: Props) {
             key={team}
             type="button"
             onClick={() => handleTeamClick(team)}
-            className={`flex w-full items-center justify-between rounded-2xl border p-4 text-left font-bold transition ${
+            className={`w-full touch-manipulation select-none rounded-2xl border p-4 text-left font-bold transition active:scale-[0.98] ${
               isSelected
-                ? "border-lime-400 bg-lime-400 text-black"
+                ? "border-lime-300 bg-lime-400 text-black"
                 : "border-white/10 bg-black/40 text-white hover:bg-white/10"
             }`}
           >
-            <div className="flex min-w-0 items-center gap-3">
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex min-w-0 items-center gap-3">
+                <span
+                  className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-black ${
+                    index < 2
+                      ? "bg-lime-400 text-black"
+                      : index === 2
+                      ? "bg-yellow-300 text-black"
+                      : "bg-slate-700 text-white"
+                  }`}
+                >
+                  {index + 1}
+                </span>
+
+                <Flag team={team} />
+
+                <span className="truncate">{team}</span>
+              </div>
+
               <span
-                className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-black ${
-                  index < 2
-                    ? "bg-lime-400 text-black"
-                    : index === 2
-                    ? "bg-yellow-300 text-black"
-                    : "bg-slate-700 text-white"
+                className={`shrink-0 rounded-full px-3 py-1 text-xs font-black ${
+                  isSelected
+                    ? "bg-black/20 text-black"
+                    : "bg-white/10 text-slate-300"
                 }`}
               >
-                {index + 1}
+                {isSelected ? "Selected" : "Tap"}
               </span>
-
-              <Flag team={team} />
-
-              <span className="truncate">{team}</span>
             </div>
-
-            <span className="text-xs font-black opacity-70">
-              {isSelected ? "Choose swap" : "Tap"}
-            </span>
           </button>
         );
       })}
 
       <p className="text-xs text-slate-400">
-        Tap two teams to switch their positions.
+        Tap one team, then tap another team to switch their positions.
       </p>
     </div>
   );
