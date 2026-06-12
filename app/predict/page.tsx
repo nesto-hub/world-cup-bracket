@@ -8,6 +8,7 @@ import { BRACKET_LOCK_DATE } from "@/lib/config";
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 
+
 type Rankings = Record<string, string[]>;
 
 type Slot = {
@@ -312,13 +313,13 @@ function PredictPageContent() {
       alert("Brackets are locked.");
       return;
     }
-  
+
     const bracketData = {
       rankings,
       thirdPlaceRanking,
       winnersByMatch,
     };
-  
+
     const { data, error } = await supabase
       .from("brackets")
       .insert({
@@ -328,13 +329,13 @@ function PredictPageContent() {
       })
       .select()
       .single();
-    
+
     if (error) {
       console.error(error);
       alert(error.message);
       return;
     }
-  
+
     setShareUrl(`${window.location.origin}/bracket/${data.id}`);
   }
 

@@ -3,6 +3,34 @@ import Link from "next/link";
 export default function HomePage() {
   return (
     <main className="min-h-screen bg-black text-white">
+        <nav className="relative z-10 mx-auto flex max-w-6xl items-center justify-between px-6 py-5">
+          <Link href="/" className="text-xl font-black text-white">
+            World Cup Bracket
+          </Link>
+
+          <div className="flex gap-3">
+            <Link
+              href="/"
+              className="rounded-xl bg-white/10 px-4 py-2 font-bold text-white hover:bg-white/20"
+            >
+              Home
+            </Link>
+
+            <Link
+              href="/leagues"
+              className="rounded-xl bg-lime-400 px-4 py-2 font-bold text-black hover:bg-lime-300"
+            >
+              Create / Join League
+            </Link>
+
+            <Link
+              href="/leaderboard"
+              className="rounded-xl bg-white/10 px-4 py-2 font-bold text-white hover:bg-white/20"
+            >
+              Public Leaderboard
+            </Link>
+          </div>
+        </nav>
       <div className="fixed inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(132,204,22,0.25),transparent_30%),radial-gradient(circle_at_top_right,_rgba(236,72,153,0.20),transparent_35%),radial-gradient(circle_at_bottom,_rgba(59,130,246,0.18),transparent_45%)]" />
 
       <div className="relative mx-auto flex min-h-screen max-w-6xl flex-col justify-center px-6 py-12">
@@ -28,7 +56,7 @@ export default function HomePage() {
           </Link>
 
           <Link
-            href="/leaderboard"
+            href="/leagues"
             className="rounded-2xl border border-white/10 bg-white/10 px-7 py-4 font-black text-white hover:bg-white/20"
           >
             View Leaderboard
