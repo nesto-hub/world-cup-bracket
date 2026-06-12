@@ -5,6 +5,7 @@ type Slot = {
 
 type BracketData = {
   rankings?: Record<string, string[]>;
+  thirdPlaceRanking?: string[];
   winnersByMatch?: Record<string, Slot>;
 };
 
@@ -20,24 +21,12 @@ type ActualGroupRanking = {
 };
 
 function pointsForMatch(matchId: number) {
-  // Round of 32
-  if (matchId >= 73 && matchId <= 88) return 2;
-
-  // Round of 16
-  if (matchId >= 89 && matchId <= 96) return 4;
-
-  // Quarterfinals
-  if (matchId >= 97 && matchId <= 100) return 8;
-
-  // Semifinals
-  if (matchId >= 101 && matchId <= 102) return 16;
-
-  // Third Place Match
+  if (matchId >= 73 && matchId <= 88) return 4;
+  if (matchId >= 89 && matchId <= 96) return 8;
+  if (matchId >= 97 && matchId <= 100) return 16;
+  if (matchId >= 101 && matchId <= 102) return 24;
   if (matchId === 103) return 16;
-
-  // Final
   if (matchId === 104) return 32;
-
   return 0;
 }
 
@@ -50,14 +39,26 @@ export function calculateScore(
 
   const predictions = bracket.winnersByMatch || {};
   const rankings = bracket.rankings || {};
+  const predictedAdvancingThirdPlace = bracket.thirdPlaceRanking?.slice(0, 8) || [];
 
-  // Group stage: 1 point for exact position
+  // Group winner / runner-up: 2 points for exact 1st or 2nd place
   actualGroupRankings.forEach((result) => {
-    const predictedTeam =
-      rankings[result.group_name]?.[result.position - 1];
+    const predictedTeam = rankings[result.group_name]?.[result.position - 1];
 
-    if (predictedTeam === result.team) {
-      score += 1;
+    if (predictedTeam === result.team && (result.position === 1 || result.position === 2)) {
+      score += 2;
+    }
+  });
+
+  // Advancing third-place teams: 3 points each
+  const actualAdvancingThirdPlaceTeams = actualGroupRankings
+    .filter((result) => result.position === 3)
+    .map((result) => result.team)
+    .slice(0, 8);
+
+  predictedAdvancingThirdPlace.forEach((team) => {
+    if (actualAdvancingThirdPlaceTeams.includes(team)) {
+      score += 3;
     }
   });
 
@@ -69,21 +70,6 @@ export function calculateScore(
       score += pointsForMatch(result.match_id);
     }
   });
-
-  // Champion bonus
-  const predictedChampion = predictions["104"]?.team;
-
-  const actualChampion = actualResults.find(
-    (result) => result.match_id === 104
-  )?.winner;
-
-  if (
-    predictedChampion &&
-    actualChampion &&
-    predictedChampion === actualChampion
-  ) {
-    score += 20;
-  }
 
   return score;
 }
