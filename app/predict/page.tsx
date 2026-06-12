@@ -174,6 +174,7 @@ const round16: Match[] = [
   { id: 92, teamA: winner(79), teamB: winner(80) },
   { id: 95, teamA: winner(86), teamB: winner(88) },
   { id: 96, teamA: winner(85), teamB: winner(87) },
+  ];
 const quarterfinals: Match[] = [
   { id: 97, teamA: winner(89), teamB: winner(90) },
   { id: 98, teamA: winner(93), teamB: winner(94) },
