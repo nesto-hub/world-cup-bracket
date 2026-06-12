@@ -694,149 +694,6 @@ function loser(match: Match): Slot {
                     )}
                   </div>
                 
-{currentStep === 3 && (
-  <section>
-    <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
-      <div>
-        <h2 className="text-4xl font-black">Knockout Bracket</h2>
-        <p className="mt-2 text-slate-300">
-          Desktop shows the full bracket. Mobile uses round-by-round tabs.
-        </p>
-      </div>
-
-      <button
-        onClick={() => setCurrentStep(4)}
-        className="rounded-2xl bg-lime-400 px-6 py-3 font-black text-black hover:bg-lime-300"
-      >
-        Save
-      </button>
-    </div>
-
-    <div className="lg:hidden">
-      <div className="mb-4 flex gap-2 overflow-x-auto pb-2">
-        {rounds.map((round, index) => (
-          <button
-            key={round.name}
-            onClick={() => setMobileRound(index)}
-            className={`shrink-0 rounded-full px-4 py-2 text-sm font-black ${
-              mobileRound === index
-                ? "bg-lime-400 text-black"
-                : "bg-white/10 text-white"
-            }`}
-          >
-            {round.name}
-          </button>
-        ))}
-      </div>
-
-      <div className="space-y-4">
-        {rounds[mobileRound].matches.map((match) => (
-          <RenderMatch key={match.id} match={match} />
-        ))}
-      </div>
-
-      {champion?.team && (
-        <div className="mt-6 rounded-3xl bg-lime-400 p-6 text-center text-black">
-          <p className="font-black uppercase tracking-[0.25em]">
-            Champion
-          </p>
-          <h3 className="mt-3 text-4xl font-black">{champion.team}</h3>
-        </div>
-      )}
-    </div>
-
-    <div className="hidden overflow-x-auto rounded-[2rem] border border-lime-400/30 bg-black/70 p-6 shadow-2xl lg:block">
-      <div className="flex min-w-[1450px] items-center justify-between gap-6">
-
-        <div className="grid w-[260px] gap-4">
-          {round32.slice(0, 8).map((match) => (
-            <RenderMatch key={match.id} match={match} />
-          ))}
-        </div>
-
-        <div className="grid w-[240px] gap-8">
-          {round16.slice(0, 4).map((match) => (
-            <RenderMatch key={match.id} match={match} />
-          ))}
-        </div>
-
-        <div className="grid w-[230px] gap-16">
-          {quarterfinals.slice(0, 2).map((match) => (
-            <RenderMatch key={match.id} match={match} />
-          ))}
-        </div>
-
-        <div className="grid w-[220px] gap-20">
-          {semifinals.slice(0, 1).map((match) => (
-            <RenderMatch key={match.id} match={match} />
-          ))}
-        </div>
-
-        <div className="w-[280px]">
-
-          <div className="rounded-[2rem] border border-lime-400 bg-lime-400 p-6 text-center text-black shadow-2xl">
-            <p className="text-xs font-black uppercase tracking-[0.3em]">
-              Final M104
-            </p>
-
-            <div className="mt-4">
-              <RenderMatch match={final} />
-            </div>
-
-            {champion?.team && (
-              <h3 className="mt-5 text-4xl font-black">
-                {champion.team}
-              </h3>
-            )}
-          </div>
-
-          <div className="mt-6 rounded-[2rem] border border-yellow-300 bg-yellow-300 p-6 text-center text-black shadow-2xl">
-            <p className="text-xs font-black uppercase tracking-[0.3em]">
-              Third Place M103
-            </p>
-
-            <div className="mt-4">
-              <RenderMatch match={thirdPlaceMatch} />
-            </div>
-
-            {thirdPlace?.team && (
-              <h3 className="mt-5 text-3xl font-black">
-                3rd: {thirdPlace.team}
-              </h3>
-            )}
-          </div>
-
-        </div>
-
-        <div className="grid w-[220px] gap-20">
-          {semifinals.slice(1, 2).map((match) => (
-            <RenderMatch key={match.id} match={match} />
-          ))}
-        </div>
-
-        <div className="grid w-[230px] gap-16">
-          {quarterfinals.slice(2, 4).map((match) => (
-            <RenderMatch key={match.id} match={match} />
-          ))}
-        </div>
-
-        <div className="grid w-[240px] gap-8">
-          {round16.slice(4, 8).map((match) => (
-            <RenderMatch key={match.id} match={match} />
-          ))}
-        </div>
-
-        <div className="grid w-[260px] gap-4">
-          {round32.slice(8, 16).map((match) => (
-            <RenderMatch key={match.id} match={match} />
-          ))}
-        </div>
-
-      </div>
-    </div>
-  </section>
-)}
-
         {currentStep === 4 && (
           <section className="rounded-3xl border border-white/10 bg-white/10 p-8 shadow-2xl backdrop-blur-xl">
             <h2 className="text-4xl font-black">Save & Share</h2>
@@ -851,13 +708,13 @@ function loser(match: Match): Slot {
               value={playerName}
               onChange={(e) => setPlayerName(e.target.value)}
             />
+
             <div className="mt-6 rounded-xl bg-black/40 p-4 text-slate-300">
               League:
               <span className="ml-2 font-black text-lime-400">
                 {leagueCode}
               </span>
             </div>
-
 
             <button
               disabled={isLocked || saving}
@@ -879,7 +736,8 @@ function loser(match: Match): Slot {
       </div>
     </main>
   );
-)}
+}
+
 export default function PredictPage() {
   return (
     <Suspense fallback={<main className="min-h-screen bg-black text-white" />}>
