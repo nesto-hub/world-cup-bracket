@@ -163,7 +163,17 @@ function PredictPageContent() {
   function winner(matchId: number): Slot {
     return winnersByMatch[matchId] || { label: `W${matchId}`, team: "" };
   }
+const round32 = buildRoundOf32();
 
+const round16: Match[] = [
+  { id: 89, teamA: winner(74), teamB: winner(77) },
+  { id: 90, teamA: winner(73), teamB: winner(75) },
+  { id: 93, teamA: winner(83), teamB: winner(84) },
+  { id: 94, teamA: winner(81), teamB: winner(82) },
+  { id: 91, teamA: winner(76), teamB: winner(78) },
+  { id: 92, teamA: winner(79), teamB: winner(80) },
+  { id: 95, teamA: winner(86), teamB: winner(88) },
+  { id: 96, teamA: winner(85), teamB: winner(87) },
 const quarterfinals: Match[] = [
   { id: 97, teamA: winner(89), teamB: winner(90) },
   { id: 98, teamA: winner(93), teamB: winner(94) },
