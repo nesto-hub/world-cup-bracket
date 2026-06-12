@@ -879,7 +879,7 @@ function loser(match: Match): Slot {
       </div>
     </main>
   );
-}
+)}
 export default function PredictPage() {
   return (
     <Suspense fallback={<main className="min-h-screen bg-black text-white" />}>
