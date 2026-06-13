@@ -239,10 +239,28 @@ export default async function BracketPage({
     { id: 102, teamA: winner(99), teamB: winner(100) },
   ];
 
+  function loser(matchId: number, teamA: Slot, teamB: Slot): Slot {
+    const pickedWinner = winner(matchId);
+  
+    if (!pickedWinner.team) {
+      return { label: `L${matchId}`, team: "" };
+    }
+  
+    if (pickedWinner.team === teamA.team) {
+      return { label: `L${matchId}`, team: teamB.team };
+    }
+  
+    if (pickedWinner.team === teamB.team) {
+      return { label: `L${matchId}`, team: teamA.team };
+    }
+  
+    return { label: `L${matchId}`, team: "" };
+  }
+  
   const thirdPlace: Match = {
     id: 103,
-    teamA: winner(103),
-    teamB: { label: "3rd place playoff", team: "" },
+    teamA: loser(101, semifinals[0].teamA, semifinals[0].teamB),
+    teamB: loser(102, semifinals[1].teamA, semifinals[1].teamB),
   };
 
   const final: Match = {
