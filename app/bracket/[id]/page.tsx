@@ -63,8 +63,14 @@ function TeamRow({ team, index }: { team: string; index: number }) {
   );
 }
 
-function ReadOnlyMatch({ match }: { match: Match }) {
-  const winner = match.teamA.team || match.teamB.team ? "" : "";
+function ReadOnlyMatch({
+  match,
+  pickedWinner,
+}: {
+  match: Match;
+  pickedWinner?: Slot;
+}) {
+  const pickedTeam = pickedWinner?.team;
 
   return (
     <div className="rounded-2xl border border-lime-400/30 bg-lime-950/20 p-3 shadow-lg">
@@ -73,7 +79,13 @@ function ReadOnlyMatch({ match }: { match: Match }) {
       </div>
 
       <div className="space-y-2">
-        <div className="flex items-center justify-between rounded-xl bg-white/10 px-3 py-2 text-sm font-black">
+        <div
+          className={`flex items-center justify-between rounded-xl px-3 py-2 text-sm font-black ${
+            pickedTeam && pickedTeam === match.teamA.team
+              ? "bg-lime-400 text-black"
+              : "bg-white/10 text-white"
+          }`}
+        >
           <TeamLabel team={match.teamA.team} />
           <span className="ml-2 rounded bg-black/30 px-2 py-1 text-[10px]">
             {match.teamA.label}
@@ -84,7 +96,13 @@ function ReadOnlyMatch({ match }: { match: Match }) {
           VS
         </div>
 
-        <div className="flex items-center justify-between rounded-xl bg-white/10 px-3 py-2 text-sm font-black">
+        <div
+          className={`flex items-center justify-between rounded-xl px-3 py-2 text-sm font-black ${
+            pickedTeam && pickedTeam === match.teamB.team
+              ? "bg-lime-400 text-black"
+              : "bg-white/10 text-white"
+          }`}
+        >
           <TeamLabel team={match.teamB.team} />
           <span className="ml-2 rounded bg-black/30 px-2 py-1 text-[10px]">
             {match.teamB.label}
@@ -136,28 +154,67 @@ export default async function BracketPage({
     (actualGroupRankings || []) as ActualGroupRanking[]
   );
 
+  function getTeam(group: string, position: number): string {
+    return (rankings[group] as string[] | undefined)?.[position - 1] || "";
+  }
+
+  function getThirdPlaceGroup(team: string): string {
+    const entry = Object.entries(rankings).find(
+      ([, groupRanking]) => (groupRanking as string[])[2] === team
+    );
+
+    return entry?.[0] || "";
+  }
+
+  function getThirdPlaceSlot(
+    allowedGroups: string[],
+    usedGroups: Set<string>
+  ): Slot {
+    for (const team of thirdPlaceRanking as string[]) {
+      const group = getThirdPlaceGroup(team);
+
+      if (group && allowedGroups.includes(group) && !usedGroups.has(group)) {
+        usedGroups.add(group);
+        return { label: `3${group}`, team };
+      }
+    }
+
+    return { label: `3${allowedGroups.join("")}`, team: "" };
+  }
+
+  function buildRoundOf32(): Match[] {
+    const usedThirdGroups = new Set<string>();
+    const third = (allowed: string[]) =>
+      getThirdPlaceSlot(allowed, usedThirdGroups);
+
+    return [
+      { id: 74, teamA: { label: "1E", team: getTeam("E", 1) }, teamB: third(["A", "B", "C", "D", "F"]) },
+      { id: 77, teamA: { label: "1I", team: getTeam("I", 1) }, teamB: third(["C", "D", "F", "G", "H"]) },
+      { id: 73, teamA: { label: "2A", team: getTeam("A", 2) }, teamB: { label: "2B", team: getTeam("B", 2) } },
+      { id: 75, teamA: { label: "1F", team: getTeam("F", 1) }, teamB: { label: "2C", team: getTeam("C", 2) } },
+
+      { id: 83, teamA: { label: "2K", team: getTeam("K", 2) }, teamB: { label: "2L", team: getTeam("L", 2) } },
+      { id: 84, teamA: { label: "1H", team: getTeam("H", 1) }, teamB: { label: "2J", team: getTeam("J", 2) } },
+      { id: 81, teamA: { label: "1D", team: getTeam("D", 1) }, teamB: third(["B", "E", "F", "I", "J"]) },
+      { id: 82, teamA: { label: "1G", team: getTeam("G", 1) }, teamB: third(["A", "E", "H", "I", "J"]) },
+
+      { id: 76, teamA: { label: "1C", team: getTeam("C", 1) }, teamB: { label: "2F", team: getTeam("F", 2) } },
+      { id: 78, teamA: { label: "2E", team: getTeam("E", 2) }, teamB: { label: "2I", team: getTeam("I", 2) } },
+      { id: 79, teamA: { label: "1A", team: getTeam("A", 1) }, teamB: third(["C", "E", "F", "H", "I"]) },
+      { id: 80, teamA: { label: "1L", team: getTeam("L", 1) }, teamB: third(["E", "H", "I", "J", "K"]) },
+
+      { id: 86, teamA: { label: "1J", team: getTeam("J", 1) }, teamB: { label: "2H", team: getTeam("H", 2) } },
+      { id: 88, teamA: { label: "2D", team: getTeam("D", 2) }, teamB: { label: "2G", team: getTeam("G", 2) } },
+      { id: 85, teamA: { label: "1B", team: getTeam("B", 1) }, teamB: third(["E", "F", "G", "I", "J"]) },
+      { id: 87, teamA: { label: "1K", team: getTeam("K", 1) }, teamB: third(["D", "E", "I", "J", "L"]) },
+    ];
+  }
+
   function winner(matchId: number): Slot {
     return winnersByMatch[String(matchId)] || { label: `W${matchId}`, team: "" };
   }
 
-  const round32: Match[] = [
-    { id: 74, teamA: winner(74), teamB: { label: "Opponent", team: "" } },
-    { id: 77, teamA: winner(77), teamB: { label: "Opponent", team: "" } },
-    { id: 73, teamA: winner(73), teamB: { label: "Opponent", team: "" } },
-    { id: 75, teamA: winner(75), teamB: { label: "Opponent", team: "" } },
-    { id: 83, teamA: winner(83), teamB: { label: "Opponent", team: "" } },
-    { id: 84, teamA: winner(84), teamB: { label: "Opponent", team: "" } },
-    { id: 81, teamA: winner(81), teamB: { label: "Opponent", team: "" } },
-    { id: 82, teamA: winner(82), teamB: { label: "Opponent", team: "" } },
-    { id: 76, teamA: winner(76), teamB: { label: "Opponent", team: "" } },
-    { id: 78, teamA: winner(78), teamB: { label: "Opponent", team: "" } },
-    { id: 79, teamA: winner(79), teamB: { label: "Opponent", team: "" } },
-    { id: 80, teamA: winner(80), teamB: { label: "Opponent", team: "" } },
-    { id: 86, teamA: winner(86), teamB: { label: "Opponent", team: "" } },
-    { id: 88, teamA: winner(88), teamB: { label: "Opponent", team: "" } },
-    { id: 85, teamA: winner(85), teamB: { label: "Opponent", team: "" } },
-    { id: 87, teamA: winner(87), teamB: { label: "Opponent", team: "" } },
-  ];
+  const round32 = buildRoundOf32();
 
   const round16: Match[] = [
     { id: 89, teamA: winner(74), teamB: winner(77) },
@@ -260,7 +317,7 @@ export default async function BracketPage({
           <h2 className="text-3xl font-black">Best Third-Place Teams</h2>
 
           <div className="mt-6 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
-            {thirdPlaceRanking.map((team: string, index: number) => (
+            {(thirdPlaceRanking as string[]).map((team, index) => (
               <div
                 key={team}
                 className={`flex items-center gap-3 rounded-xl border p-3 font-bold ${
@@ -287,25 +344,41 @@ export default async function BracketPage({
             <div className="flex min-w-[1450px] items-center justify-between gap-6">
               <div className="grid w-[260px] gap-4">
                 {round32.slice(0, 8).map((match) => (
-                  <ReadOnlyMatch key={match.id} match={match} />
+                  <ReadOnlyMatch
+                    key={match.id}
+                    match={match}
+                    pickedWinner={winner(match.id)}
+                  />
                 ))}
               </div>
 
               <div className="grid w-[240px] gap-8">
                 {round16.slice(0, 4).map((match) => (
-                  <ReadOnlyMatch key={match.id} match={match} />
+                  <ReadOnlyMatch
+                    key={match.id}
+                    match={match}
+                    pickedWinner={winner(match.id)}
+                  />
                 ))}
               </div>
 
               <div className="grid w-[230px] gap-16">
                 {quarterfinals.slice(0, 2).map((match) => (
-                  <ReadOnlyMatch key={match.id} match={match} />
+                  <ReadOnlyMatch
+                    key={match.id}
+                    match={match}
+                    pickedWinner={winner(match.id)}
+                  />
                 ))}
               </div>
 
               <div className="grid w-[220px] gap-20">
                 {semifinals.slice(0, 1).map((match) => (
-                  <ReadOnlyMatch key={match.id} match={match} />
+                  <ReadOnlyMatch
+                    key={match.id}
+                    match={match}
+                    pickedWinner={winner(match.id)}
+                  />
                 ))}
               </div>
 
@@ -315,7 +388,7 @@ export default async function BracketPage({
                 </p>
 
                 <div className="mt-4">
-                  <ReadOnlyMatch match={final} />
+                  <ReadOnlyMatch match={final} pickedWinner={winner(104)} />
                 </div>
 
                 <div className="mt-6 rounded-2xl bg-black/10 p-4">
@@ -324,32 +397,51 @@ export default async function BracketPage({
                   </p>
 
                   <div className="mt-3">
-                    <ReadOnlyMatch match={thirdPlace} />
+                    <ReadOnlyMatch
+                      match={thirdPlace}
+                      pickedWinner={winner(103)}
+                    />
                   </div>
                 </div>
               </div>
 
               <div className="grid w-[220px] gap-20">
                 {semifinals.slice(1, 2).map((match) => (
-                  <ReadOnlyMatch key={match.id} match={match} />
+                  <ReadOnlyMatch
+                    key={match.id}
+                    match={match}
+                    pickedWinner={winner(match.id)}
+                  />
                 ))}
               </div>
 
               <div className="grid w-[230px] gap-16">
                 {quarterfinals.slice(2, 4).map((match) => (
-                  <ReadOnlyMatch key={match.id} match={match} />
+                  <ReadOnlyMatch
+                    key={match.id}
+                    match={match}
+                    pickedWinner={winner(match.id)}
+                  />
                 ))}
               </div>
 
               <div className="grid w-[240px] gap-8">
                 {round16.slice(4, 8).map((match) => (
-                  <ReadOnlyMatch key={match.id} match={match} />
+                  <ReadOnlyMatch
+                    key={match.id}
+                    match={match}
+                    pickedWinner={winner(match.id)}
+                  />
                 ))}
               </div>
 
               <div className="grid w-[260px] gap-4">
                 {round32.slice(8, 16).map((match) => (
-                  <ReadOnlyMatch key={match.id} match={match} />
+                  <ReadOnlyMatch
+                    key={match.id}
+                    match={match}
+                    pickedWinner={winner(match.id)}
+                  />
                 ))}
               </div>
             </div>
