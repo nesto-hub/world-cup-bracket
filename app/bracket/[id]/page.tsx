@@ -242,7 +242,7 @@ export default async function BracketPage({
   const thirdPlace: Match = {
     id: 103,
     teamA: winner(103),
-    teamB: { label: "Opponent", team: "" },
+    teamB: { label: "3rd place playoff", team: "" },
   };
 
   const final: Match = {
