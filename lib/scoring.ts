@@ -20,6 +20,11 @@ type ActualGroupRanking = {
   team: string;
 };
 
+type ActualThirdPlaceTeam = {
+  position: number;
+  team: string;
+};
+
 function pointsForMatch(matchId: number) {
   if (matchId >= 73 && matchId <= 88) return 4;
   if (matchId >= 89 && matchId <= 96) return 8;
@@ -33,7 +38,8 @@ function pointsForMatch(matchId: number) {
 export function calculateScore(
   bracket: BracketData,
   actualResults: ActualResult[],
-  actualGroupRankings: ActualGroupRanking[] = []
+  actualGroupRankings: ActualGroupRanking[] = [],
+  actualThirdPlaceTeams: ActualThirdPlaceTeam[] = []
 ) {
   let score = 0;
 
@@ -45,16 +51,19 @@ export function calculateScore(
   actualGroupRankings.forEach((result) => {
     const predictedTeam = rankings[result.group_name]?.[result.position - 1];
 
-    if (predictedTeam === result.team && (result.position === 1 || result.position === 2)) {
+    if (
+      predictedTeam === result.team &&
+      (result.position === 1 || result.position === 2)
+    ) {
       score += 2;
     }
   });
 
   // Advancing third-place teams: 3 points each
-  const actualAdvancingThirdPlaceTeams = actualGroupRankings
-    .filter((result) => result.position === 3)
-    .map((result) => result.team)
-    .slice(0, 8);
+  const actualAdvancingThirdPlaceTeams = actualThirdPlaceTeams
+    .sort((a, b) => a.position - b.position)
+    .slice(0, 8)
+    .map((result) => result.team);
 
   predictedAdvancingThirdPlace.forEach((team) => {
     if (actualAdvancingThirdPlaceTeams.includes(team)) {
