@@ -133,7 +133,10 @@ export default async function BracketPage({
   const { data: actualGroupRankings } = await supabase
     .from("actual_group_rankings")
     .select("*");
-
+  
+  const { data: actualThirdPlaceTeams } = await supabase
+    .from("actual_third_place_teams")
+    .select("*");
   if (error || !data) {
     return (
       <main className="min-h-screen bg-black p-8 text-white">
@@ -151,7 +154,8 @@ export default async function BracketPage({
   const score = calculateScore(
     bracket,
     (actualResults || []) as ActualResult[],
-    (actualGroupRankings || []) as ActualGroupRanking[]
+    (actualGroupRankings || []) as ActualGroupRanking[],
+    actualThirdPlaceTeams || []
   );
 
   function getTeam(group: string, position: number): string {
