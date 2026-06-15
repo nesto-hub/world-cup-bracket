@@ -51,7 +51,10 @@ export default async function LeaderboardPage({
   const { data: actualGroupRankings, error: groupError } = await supabase
     .from("actual_group_rankings")
     .select("*");
-
+  const { data: actualThirdPlaceTeams } = await supabase
+    .from("actual_third_place_teams")
+    .select("*");
+  
   if (bracketsError || resultsError || groupError) {
     return (
       <main className="min-h-screen bg-black p-8 text-white">
@@ -68,8 +71,9 @@ export default async function LeaderboardPage({
       championPick: getChampionPick(bracket.data),
       score: calculateScore(
         bracket.data,
-        (actualResults || []) as ActualResult[],
-        (actualGroupRankings || []) as ActualGroupRanking[]
+        actualResults || [],
+        actualGroupRankings || [],
+        actualThirdPlaceTeams || []
       ),
     }))
     .sort((a, b) => b.score - a.score);
