@@ -120,15 +120,19 @@ function PredictPageContent() {
     allowedGroups: string[],
     usedGroups: Set<string>
   ): Slot {
-    for (const team of thirdPlaceRanking) {
+    for (const team of thirdPlaceRanking.slice(0, 8)) {
       const group = getThirdPlaceGroup(team);
-
-      if (group && allowedGroups.includes(group) && !usedGroups.has(group)) {
+  
+      if (
+        group &&
+        allowedGroups.includes(group) &&
+        !usedGroups.has(group)
+      ) {
         usedGroups.add(group);
         return { label: `3${group}`, team };
       }
     }
-
+  
     return { label: `3${allowedGroups.join("")}`, team: "" };
   }
 
