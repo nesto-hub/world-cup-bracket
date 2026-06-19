@@ -55,9 +55,7 @@ function TeamRow({ team, index }: { team: string; index: number }) {
       <span className="flex h-8 w-8 items-center justify-center rounded-full bg-lime-400 text-sm font-black text-black">
         {index + 1}
       </span>
-
       <Flag team={team} />
-
       <span>{team}</span>
     </div>
   );
@@ -74,9 +72,7 @@ function ReadOnlyMatch({
 
   return (
     <div className="rounded-2xl border border-lime-400/30 bg-lime-950/20 p-3 shadow-lg">
-      <div className="mb-2 text-xs font-black text-lime-300">
-        M{match.id}
-      </div>
+      <div className="mb-2 text-xs font-black text-lime-300">M{match.id}</div>
 
       <div className="space-y-2">
         <div
@@ -133,10 +129,11 @@ export default async function BracketPage({
   const { data: actualGroupRankings } = await supabase
     .from("actual_group_rankings")
     .select("*");
-  
+
   const { data: actualThirdPlaceTeams } = await supabase
     .from("actual_third_place_teams")
     .select("*");
+
   if (error || !data) {
     return (
       <main className="min-h-screen bg-black p-8 text-white">
@@ -149,7 +146,6 @@ export default async function BracketPage({
   const rankings = bracket.rankings || {};
   const thirdPlaceRanking = bracket.thirdPlaceRanking || [];
   const winnersByMatch = bracket.winnersByMatch || {};
-  const champion = winnersByMatch["104"];
 
   const score = calculateScore(
     bracket,
@@ -192,86 +188,231 @@ export default async function BracketPage({
       getThirdPlaceSlot(allowed, usedThirdGroups);
 
     return [
-      { id: 74, teamA: { label: "1E", team: getTeam("E", 1) }, teamB: third(["A", "B", "C", "D", "F"]) },
-      { id: 77, teamA: { label: "1I", team: getTeam("I", 1) }, teamB: third(["C", "D", "F", "G", "H"]) },
-      { id: 73, teamA: { label: "2A", team: getTeam("A", 2) }, teamB: { label: "2B", team: getTeam("B", 2) } },
-      { id: 75, teamA: { label: "1F", team: getTeam("F", 1) }, teamB: { label: "2C", team: getTeam("C", 2) } },
-
-      { id: 83, teamA: { label: "2K", team: getTeam("K", 2) }, teamB: { label: "2L", team: getTeam("L", 2) } },
-      { id: 84, teamA: { label: "1H", team: getTeam("H", 1) }, teamB: { label: "2J", team: getTeam("J", 2) } },
-      { id: 81, teamA: { label: "1D", team: getTeam("D", 1) }, teamB: third(["B", "E", "F", "I", "J"]) },
-      { id: 82, teamA: { label: "1G", team: getTeam("G", 1) }, teamB: third(["A", "E", "H", "I", "J"]) },
-
-      { id: 76, teamA: { label: "1C", team: getTeam("C", 1) }, teamB: { label: "2F", team: getTeam("F", 2) } },
-      { id: 78, teamA: { label: "2E", team: getTeam("E", 2) }, teamB: { label: "2I", team: getTeam("I", 2) } },
-      { id: 79, teamA: { label: "1A", team: getTeam("A", 1) }, teamB: third(["C", "E", "F", "H", "I"]) },
-      { id: 80, teamA: { label: "1L", team: getTeam("L", 1) }, teamB: third(["E", "H", "I", "J", "K"]) },
-
-      { id: 86, teamA: { label: "1J", team: getTeam("J", 1) }, teamB: { label: "2H", team: getTeam("H", 2) } },
-      { id: 88, teamA: { label: "2D", team: getTeam("D", 2) }, teamB: { label: "2G", team: getTeam("G", 2) } },
-      { id: 85, teamA: { label: "1B", team: getTeam("B", 1) }, teamB: third(["E", "F", "G", "I", "J"]) },
-      { id: 87, teamA: { label: "1K", team: getTeam("K", 1) }, teamB: third(["D", "E", "I", "J", "L"]) },
+      {
+        id: 74,
+        teamA: { label: "1E", team: getTeam("E", 1) },
+        teamB: third(["A", "B", "C", "D", "F"]),
+      },
+      {
+        id: 77,
+        teamA: { label: "1I", team: getTeam("I", 1) },
+        teamB: third(["C", "D", "F", "G", "H"]),
+      },
+      {
+        id: 73,
+        teamA: { label: "2A", team: getTeam("A", 2) },
+        teamB: { label: "2B", team: getTeam("B", 2) },
+      },
+      {
+        id: 75,
+        teamA: { label: "1F", team: getTeam("F", 1) },
+        teamB: { label: "2C", team: getTeam("C", 2) },
+      },
+      {
+        id: 83,
+        teamA: { label: "2K", team: getTeam("K", 2) },
+        teamB: { label: "2L", team: getTeam("L", 2) },
+      },
+      {
+        id: 84,
+        teamA: { label: "1H", team: getTeam("H", 1) },
+        teamB: { label: "2J", team: getTeam("J", 2) },
+      },
+      {
+        id: 81,
+        teamA: { label: "1D", team: getTeam("D", 1) },
+        teamB: third(["B", "E", "F", "I", "J"]),
+      },
+      {
+        id: 82,
+        teamA: { label: "1G", team: getTeam("G", 1) },
+        teamB: third(["A", "E", "H", "I", "J"]),
+      },
+      {
+        id: 76,
+        teamA: { label: "1C", team: getTeam("C", 1) },
+        teamB: { label: "2F", team: getTeam("F", 2) },
+      },
+      {
+        id: 78,
+        teamA: { label: "2E", team: getTeam("E", 2) },
+        teamB: { label: "2I", team: getTeam("I", 2) },
+      },
+      {
+        id: 79,
+        teamA: { label: "1A", team: getTeam("A", 1) },
+        teamB: third(["C", "E", "F", "H", "I"]),
+      },
+      {
+        id: 80,
+        teamA: { label: "1L", team: getTeam("L", 1) },
+        teamB: third(["E", "H", "I", "J", "K"]),
+      },
+      {
+        id: 86,
+        teamA: { label: "1J", team: getTeam("J", 1) },
+        teamB: { label: "2H", team: getTeam("H", 2) },
+      },
+      {
+        id: 88,
+        teamA: { label: "2D", team: getTeam("D", 2) },
+        teamB: { label: "2G", team: getTeam("G", 2) },
+      },
+      {
+        id: 85,
+        teamA: { label: "1B", team: getTeam("B", 1) },
+        teamB: third(["E", "F", "G", "I", "J"]),
+      },
+      {
+        id: 87,
+        teamA: { label: "1K", team: getTeam("K", 1) },
+        teamB: third(["D", "E", "I", "J", "L"]),
+      },
     ];
   }
 
   function winner(matchId: number): Slot {
-    return winnersByMatch[String(matchId)] || { label: `W${matchId}`, team: "" };
+    return (
+      winnersByMatch[String(matchId)] || {
+        label: `W${matchId}`,
+        team: "",
+      }
+    );
+  }
+
+  function winnerFromMatch(match: Match): Slot {
+    const picked = winnersByMatch[String(match.id)];
+
+    if (
+      picked?.team &&
+      (picked.team === match.teamA.team || picked.team === match.teamB.team)
+    ) {
+      return picked;
+    }
+
+    if (match.teamA.team && !match.teamA.label.startsWith("3")) {
+      return match.teamA;
+    }
+
+    if (match.teamB.team && !match.teamB.label.startsWith("3")) {
+      return match.teamB;
+    }
+
+    return { label: `W${match.id}`, team: "" };
   }
 
   const round32 = buildRoundOf32();
 
   const round16: Match[] = [
-    { id: 89, teamA: winner(74), teamB: winner(77) },
-    { id: 90, teamA: winner(73), teamB: winner(75) },
-    { id: 93, teamA: winner(83), teamB: winner(84) },
-    { id: 94, teamA: winner(81), teamB: winner(82) },
-    { id: 91, teamA: winner(76), teamB: winner(78) },
-    { id: 92, teamA: winner(79), teamB: winner(80) },
-    { id: 95, teamA: winner(86), teamB: winner(88) },
-    { id: 96, teamA: winner(85), teamB: winner(87) },
+    {
+      id: 89,
+      teamA: winnerFromMatch(round32[0]),
+      teamB: winnerFromMatch(round32[1]),
+    },
+    {
+      id: 90,
+      teamA: winnerFromMatch(round32[2]),
+      teamB: winnerFromMatch(round32[3]),
+    },
+    {
+      id: 93,
+      teamA: winnerFromMatch(round32[4]),
+      teamB: winnerFromMatch(round32[5]),
+    },
+    {
+      id: 94,
+      teamA: winnerFromMatch(round32[6]),
+      teamB: winnerFromMatch(round32[7]),
+    },
+    {
+      id: 91,
+      teamA: winnerFromMatch(round32[8]),
+      teamB: winnerFromMatch(round32[9]),
+    },
+    {
+      id: 92,
+      teamA: winnerFromMatch(round32[10]),
+      teamB: winnerFromMatch(round32[11]),
+    },
+    {
+      id: 95,
+      teamA: winnerFromMatch(round32[12]),
+      teamB: winnerFromMatch(round32[13]),
+    },
+    {
+      id: 96,
+      teamA: winnerFromMatch(round32[14]),
+      teamB: winnerFromMatch(round32[15]),
+    },
   ];
 
   const quarterfinals: Match[] = [
-    { id: 97, teamA: winner(89), teamB: winner(90) },
-    { id: 98, teamA: winner(93), teamB: winner(94) },
-    { id: 99, teamA: winner(91), teamB: winner(92) },
-    { id: 100, teamA: winner(95), teamB: winner(96) },
+    {
+      id: 97,
+      teamA: winnerFromMatch(round16[0]),
+      teamB: winnerFromMatch(round16[1]),
+    },
+    {
+      id: 98,
+      teamA: winnerFromMatch(round16[2]),
+      teamB: winnerFromMatch(round16[3]),
+    },
+    {
+      id: 99,
+      teamA: winnerFromMatch(round16[4]),
+      teamB: winnerFromMatch(round16[5]),
+    },
+    {
+      id: 100,
+      teamA: winnerFromMatch(round16[6]),
+      teamB: winnerFromMatch(round16[7]),
+    },
   ];
 
   const semifinals: Match[] = [
-    { id: 101, teamA: winner(97), teamB: winner(98) },
-    { id: 102, teamA: winner(99), teamB: winner(100) },
+    {
+      id: 101,
+      teamA: winnerFromMatch(quarterfinals[0]),
+      teamB: winnerFromMatch(quarterfinals[1]),
+    },
+    {
+      id: 102,
+      teamA: winnerFromMatch(quarterfinals[2]),
+      teamB: winnerFromMatch(quarterfinals[3]),
+    },
   ];
-
-  function loser(matchId: number, teamA: Slot, teamB: Slot): Slot {
-    const pickedWinner = winner(matchId);
-  
-    if (!pickedWinner.team) {
-      return { label: `L${matchId}`, team: "" };
-    }
-  
-    if (pickedWinner.team === teamA.team) {
-      return { label: `L${matchId}`, team: teamB.team };
-    }
-  
-    if (pickedWinner.team === teamB.team) {
-      return { label: `L${matchId}`, team: teamA.team };
-    }
-  
-    return { label: `L${matchId}`, team: "" };
-  }
-  
-  const thirdPlace: Match = {
-    id: 103,
-    teamA: loser(101, semifinals[0].teamA, semifinals[0].teamB),
-    teamB: loser(102, semifinals[1].teamA, semifinals[1].teamB),
-  };
 
   const final: Match = {
     id: 104,
-    teamA: winner(101),
-    teamB: winner(102),
+    teamA: winnerFromMatch(semifinals[0]),
+    teamB: winnerFromMatch(semifinals[1]),
   };
+
+  function loserFromMatch(match: Match): Slot {
+    const pickedWinner = winnerFromMatch(match);
+
+    if (!pickedWinner.team) {
+      return { label: `L${match.id}`, team: "" };
+    }
+
+    if (pickedWinner.team === match.teamA.team) {
+      return { label: `L${match.id}`, team: match.teamB.team };
+    }
+
+    if (pickedWinner.team === match.teamB.team) {
+      return { label: `L${match.id}`, team: match.teamA.team };
+    }
+
+    return { label: `L${match.id}`, team: "" };
+  }
+
+  const thirdPlace: Match = {
+    id: 103,
+    teamA: loserFromMatch(semifinals[0]),
+    teamB: loserFromMatch(semifinals[1]),
+  };
+
+  const champion = winnerFromMatch(final);
 
   return (
     <main className="min-h-screen bg-black text-white">
@@ -369,7 +510,7 @@ export default async function BracketPage({
                   <ReadOnlyMatch
                     key={match.id}
                     match={match}
-                    pickedWinner={winner(match.id)}
+                    pickedWinner={winnerFromMatch(match)}
                   />
                 ))}
               </div>
@@ -379,7 +520,7 @@ export default async function BracketPage({
                   <ReadOnlyMatch
                     key={match.id}
                     match={match}
-                    pickedWinner={winner(match.id)}
+                    pickedWinner={winnerFromMatch(match)}
                   />
                 ))}
               </div>
@@ -389,7 +530,7 @@ export default async function BracketPage({
                   <ReadOnlyMatch
                     key={match.id}
                     match={match}
-                    pickedWinner={winner(match.id)}
+                    pickedWinner={winnerFromMatch(match)}
                   />
                 ))}
               </div>
@@ -399,7 +540,7 @@ export default async function BracketPage({
                   <ReadOnlyMatch
                     key={match.id}
                     match={match}
-                    pickedWinner={winner(match.id)}
+                    pickedWinner={winnerFromMatch(match)}
                   />
                 ))}
               </div>
@@ -410,7 +551,10 @@ export default async function BracketPage({
                 </p>
 
                 <div className="mt-4">
-                  <ReadOnlyMatch match={final} pickedWinner={winner(104)} />
+                  <ReadOnlyMatch
+                    match={final}
+                    pickedWinner={winnerFromMatch(final)}
+                  />
                 </div>
 
                 <div className="mt-6 rounded-2xl bg-black/10 p-4">
@@ -432,7 +576,7 @@ export default async function BracketPage({
                   <ReadOnlyMatch
                     key={match.id}
                     match={match}
-                    pickedWinner={winner(match.id)}
+                    pickedWinner={winnerFromMatch(match)}
                   />
                 ))}
               </div>
@@ -442,7 +586,7 @@ export default async function BracketPage({
                   <ReadOnlyMatch
                     key={match.id}
                     match={match}
-                    pickedWinner={winner(match.id)}
+                    pickedWinner={winnerFromMatch(match)}
                   />
                 ))}
               </div>
@@ -452,7 +596,7 @@ export default async function BracketPage({
                   <ReadOnlyMatch
                     key={match.id}
                     match={match}
-                    pickedWinner={winner(match.id)}
+                    pickedWinner={winnerFromMatch(match)}
                   />
                 ))}
               </div>
@@ -462,7 +606,7 @@ export default async function BracketPage({
                   <ReadOnlyMatch
                     key={match.id}
                     match={match}
-                    pickedWinner={winner(match.id)}
+                    pickedWinner={winnerFromMatch(match)}
                   />
                 ))}
               </div>
