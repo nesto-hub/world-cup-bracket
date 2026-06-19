@@ -174,7 +174,7 @@ export default async function BracketPage({
     allowedGroups: string[],
     usedGroups: Set<string>
   ): Slot {
-    for (const team of thirdPlaceRanking as string[]) {
+    for (const team of (thirdPlaceRanking as string[]).slice(0, 8)) {
       const group = getThirdPlaceGroup(team);
 
       if (group && allowedGroups.includes(group) && !usedGroups.has(group)) {
